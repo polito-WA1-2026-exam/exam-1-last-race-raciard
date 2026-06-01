@@ -52,13 +52,14 @@ class NetworkDao {
 
     /**
      * Get all segments (pairs of connected stations on the same line).
+     * Returns each physical connection only once.
      */
     getSegments() {
         return new Promise((resolve, reject) => {
             const sql = `
                 SELECT c1.station_id as s1_id, s1.name as s1_name, 
                        c2.station_id as s2_id, s2.name as s2_name,
-                       l.name as line_name
+                       l.id as line_id, l.name as line_name
                 FROM connections c1
                 JOIN connections c2 ON c1.line_id = c2.line_id AND c2.position = c1.position + 1
                 JOIN stations s1 ON c1.station_id = s1.id
@@ -70,6 +71,24 @@ class NetworkDao {
                 else resolve(rows);
             });
         });
+    }
+
+    /**
+     * Get an adjacency list of the network.
+     * Each station ID maps to an array of objects { to: stationId, lineId: lineId }
+     */
+    async getAdjacencyList() {
+        const segments = await this.getSegments();
+        const adj = {};
+        segments.forEach(seg => {
+            if (!adj[seg.s1_id]) adj[seg.s1_id] = [];
+            if (!adj[seg.s2_id]) adj[seg.s2_id] = [];
+            
+            // Explicitly add both directions to the adjacency list for validation/search
+            adj[seg.s1_id].push({ to: seg.s2_id, lineId: seg.line_id });
+            adj[seg.s2_id].push({ to: seg.s1_id, lineId: seg.line_id });
+        });
+        return adj;
     }
 }
 
