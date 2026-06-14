@@ -86,15 +86,28 @@ function GameView() {
             phase={phase}
             selectedRoute={selectedRoute}
             character={selectedCharacter}
-            currentStationId={
-              phase === PHASES.PLANNING || phase === PHASES.EXECUTION
-                ? (selectedRoute.length === 0 ? currentGame?.start.id : selectedRoute[selectedRoute.length - 1].s2_id)
-                : (phase === PHASES.RESULT)
-                  ? (gameResult?.steps[execStep]?.isFailed
-                    ? gameResult.steps[execStep].segment.s1_id
-                    : (selectedRoute.length === 0 ? currentGame?.start.id : selectedRoute[selectedRoute.length - 1].s2_id))
-                  : null
-            }
+            currentStationId={(() => {
+              if (phase === PHASES.SETUP) return null;
+              if (phase === PHASES.PLANNING) {
+                return selectedRoute.length === 0 
+                  ? currentGame?.start.id 
+                  : selectedRoute[selectedRoute.length - 1].s2_id;
+              }
+              // If journey is finished but phase is still EXECUTION (the 1s delay)
+              if (phase === PHASES.EXECUTION && gameResult?.steps && execStep >= gameResult.steps.length) {
+                return gameResult.steps[gameResult.steps.length - 1]?.segment.s2_id;
+              }
+              // During EXECUTION, base it on the current animated step
+              if (gameResult?.steps && gameResult.steps[execStep]) {
+                return gameResult.steps[execStep].segment.s1_id;
+              }
+              // In RESULT phase, stay at the last reached station
+              if (phase === PHASES.RESULT && gameResult?.steps && gameResult.steps.length > 0) {
+                const lastStep = gameResult.steps[gameResult.steps.length - 1];
+                return lastStep.isFailed ? lastStep.segment.s1_id : lastStep.segment.s2_id;
+              }
+              return currentGame?.start.id;
+            })()}
             highlightStations={
               phase === PHASES.PLANNING || phase === PHASES.EXECUTION || phase === PHASES.RESULT
                 ? [currentGame?.start.id, currentGame?.destination.id]

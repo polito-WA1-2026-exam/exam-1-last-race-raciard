@@ -84,16 +84,12 @@ function CharacterSprite({ x, y, x2, y2, progress = 0, state = 'idle', size = 50
   };
 
   return (
-    <g 
-      transform={`translate(${currentX}, ${animY})`}
-      style={{ 
-        transition: isLost ? 'transform 1.5s cubic-bezier(0.47, 0, 0.745, 0.715)' : 'none'
-      }}
-    >
+    <g transform={`translate(${currentX}, ${currentY + bounce})`}>
       <g 
         className={isLost ? 'animate-fall' : isWinner ? 'animate-jump' : ''} 
         transform={`${isFlipped ? 'scale(-1, 1)' : ''} rotate(${isLost ? 90 : 0})`}
       >
+
         <image
           href={getSprite()}
           x={-size / 2}

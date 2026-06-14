@@ -199,30 +199,36 @@ export function useGame(allSegments, stations = []) {
     try {
       const result = await api.post('/games/result', { route: selectedRoute });
 
+      let finalResult;
       if (result.steps.length === 0 && selectedRoute.length > 0) {
         // INVALID ROUTE
         const animationSteps = calculateInvalidAnimationSteps(selectedRoute);
-        setGameResult({
-          score: 0,
-          steps: animationSteps,
+        finalResult = { 
+          score: 0, 
+          steps: animationSteps, 
           isInvalid: true,
-          error: 'SYSTEM_FAILURE: INVALID_CONNECTION'
-        });
+          error: 'SYSTEM_FAILURE: INVALID_CONNECTION' 
+        };
       } else {
-        // VALID ROUTE - Enrich with local validation info for drawing the lines
+        // VALID ROUTE
         const enrichedSteps = calculateInvalidAnimationSteps(selectedRoute);
-        // Merge server coins/events with local line info
         const finalSteps = result.steps.map((s, i) => ({
           ...s,
           lineId: enrichedSteps[i]?.lineId,
           isFailed: false
         }));
-        setGameResult({ ...result, steps: finalSteps });
+        finalResult = { ...result, steps: finalSteps };
       }
 
-      setPhase(PHASES.EXECUTION);
+      // Update data state first
+      setGameResult(finalResult);
       setExecStep(0);
+      setWalkProgress(0);
+
+      // Then trigger animation phase
+      setPhase(PHASES.EXECUTION);
     } catch (err) {
+
       if (err.status === 403) {
         setGameResult({ score: 0, steps: [], error: 'Time Expired!' });
         setPhase(PHASES.RESULT);
