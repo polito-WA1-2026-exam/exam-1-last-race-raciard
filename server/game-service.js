@@ -67,10 +67,16 @@ class GameService {
 
         const adj = await this.networkDao.getAdjacencyList();
         let currentLineId = null;
+        const usedLinks = new Set();
 
         for (let i = 0; i < route.length; i++) {
             const segment = route[i];
             
+            // Link uniqueness check (undirected)
+            const linkKey = [segment.s1_id, segment.s2_id].sort((a, b) => a - b).join('-');
+            if (usedLinks.has(linkKey)) return false;
+            usedLinks.add(linkKey);
+
             // Check if segment exists and find available lines
             const availableLines = (adj[segment.s1_id] || [])
                 .filter(n => n.to === segment.s2_id)
