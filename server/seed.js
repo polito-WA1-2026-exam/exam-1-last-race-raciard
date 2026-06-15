@@ -4,16 +4,16 @@ import crypto from 'crypto';
 const db = new sqlite3.Database('./database/last-race.db');
 
 const stations = [
-  "Pietro Smusi Ave.", "Orazio Grinzosi Monument", "Claudio Torres str.", "Bibbiena Square",
-  "Fontana Oscura", "Borgo Sereno", "Viale dei Mosaici", "Torre Cinerea",
-  "Campo dell'Eco", "Porto Vecchio", "Giardini Segreti", "Belvedere"
+  "Pietro Smusi Ave.", "Orazio Grinzosi Monument", "Claudio Torres St.", "Bibbiena Square",
+  "Porta Belandi", "Borgo Catafratto", "Zephir Boulevard", "Bruno Strati Tower",
+  "Mhanz Road", "Porto Caselli", "Piermenti Gardens", "Bruttovedere"
 ];
 
 const lines = [
-  { name: "Red Line", stations: ["Pietro Smusi Ave.", "Orazio Grinzosi Monument", "Claudio Torres str.", "Bibbiena Square"] },
-  { name: "Blue Line", stations: ["Fontana Oscura", "Borgo Sereno", "Claudio Torres str.", "Viale dei Mosaici"] },
-  { name: "Green Line", stations: ["Porta Velaria", "Borgo Sereno", "Torre Cinerea", "Campo dell'Eco"] },
-  { name: "Yellow Line", stations: ["Piazza delle Lanterne", "Torre Cinerea", "Porto Vecchio", "Giardini Segreti", "Belvedere"] }
+  { name: "Red Line", stations: ["Pietro Smusi Ave.", "Orazio Grinzosi Monument", "Claudio Torres St.", "Bibbiena Square"] },
+  { name: "Blue Line", stations: ["Porta Belandi", "Borgo Catafratto ", "Claudio Torres St.", "Zephir Boulevard"] },
+  { name: "Green Line", stations: ["Porta Belandi", "Borgo Catafratto ", "Bruno Strati Tower", "Mhanz Road"] },
+  { name: "Yellow Line", stations: ["Bibbiena Square", "Bruno Strati Tower", "Porto Caselli", "Piermenti Gardens", "Bruttovedere"] }
 ];
 
 const events = [
