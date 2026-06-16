@@ -1,4 +1,5 @@
 import React from 'react';
+import './MapCanvas.css';
 
 function PlanningPath({ selectedRoute, dynamicStationCoords }) {
   if (!selectedRoute || selectedRoute.length === 0) return null;
@@ -23,7 +24,7 @@ function PlanningPath({ selectedRoute, dynamicStationCoords }) {
             strokeLinecap="round"
             strokeDasharray="15 8"
             opacity="0.5"
-            className="transition-all duration-300"
+            className="planning-trail"
           />
         );
       })}

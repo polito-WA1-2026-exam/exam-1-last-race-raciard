@@ -1,4 +1,33 @@
 /* App.css */
+.app-container {
+  min-height: 100vh;
+  background-color: var(--slate-950);
+  color: var(--slate-200);
+  transition: background-color 0.3s, color 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Desktop: fill exact viewport, no page overflow */
+@media (min-width: 1024px) {
+  .app-container {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .main-content {
+    min-height: 0;
+    overflow: hidden;
+  }
+}
+
 @keyframes loading {
   0% { transform: translateX(-100%); }
   50% { transform: translateX(100%); }

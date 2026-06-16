@@ -9,14 +9,14 @@ function RankingRow({ rank, username, score, isTopThree }) {
   };
 
   return (
-    <tr className={`border-b border-slate-800 last:border-0 ${isTopThree ? 'bg-blue-900/10' : ''}`}>
-      <td className="py-4 px-4 font-bold text-slate-500">{getRankBadge()}</td>
-      <td className="py-4 px-4">
-        <span className="font-bold text-slate-200 uppercase tracking-tighter">{username}</span>
+    <tr className={`ranking-row ${isTopThree ? 'top-three' : ''}`}>
+      <td className="rank-badge">{getRankBadge()}</td>
+      <td>
+        <span className="player-name">{username}</span>
       </td>
-      <td className="py-4 px-4 text-right">
-        <span className="font-black text-blue-400 tabular-nums">{score}</span>
-        <span className="text-[10px] ml-1 text-slate-500 uppercase font-bold">Coins</span>
+      <td className="text-right">
+        <span className="best-score">{score}</span>
+        <span className="score-unit">Coins</span>
       </td>
     </tr>
   );

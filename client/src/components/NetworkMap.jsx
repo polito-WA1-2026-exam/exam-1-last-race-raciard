@@ -1,10 +1,61 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { TransformWrapper, TransformComponent, useControls } from 'react-zoom-pan-pinch';
 import MapCanvas from './network/MapCanvas';
+import './NetworkMap.css';
+
+function ZoomControls() {
+  const { zoomIn, zoomOut, resetTransform } = useControls();
+  return (
+    <div className="zoom-controls">
+      <button className="zoom-btn" onClick={() => zoomIn()} title="Zoom in">＋</button>
+      <button className="zoom-btn" onClick={() => resetTransform()} title="Reset">⌂</button>
+      <button className="zoom-btn" onClick={() => zoomOut()} title="Zoom out">－</button>
+    </div>
+  );
+}
 
 const LINE_PALETTE = ['#EE352E', '#0039A6', '#00933C', '#FCCC0A', '#B933AD', '#00ADD0', '#FF6319', '#6CBE45'];
 
-function NetworkMap({ stations, lines, highlightStations, onStationClick, currentStationId, showLines = true, characterState = 'idle', walkProgress = 0, currentSegment = null, gameResult = null, execStep = 0, phase, selectedRoute = [], character = 'Player' }) {
+function NetworkMap({
+  stations,
+  lines,
+  highlightStations,
+  onStationClick,
+  currentStationId,
+  showLines = true,
+  characterState = 'idle',
+  walkProgress = 0,
+  currentSegment = null,
+  gameResult = null,
+  execStep = 0,
+  phase,
+  selectedRoute = [],
+  character = 'Player',
+  PHASES,
+  currentGame,
+  timeLeft,
+  onStart,
+  onSubmit,
+  onRestart
+}) {
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const getTitle = () => {
+    switch (phase) {
+      case PHASES?.SETUP: return 'Game Setup';
+      case PHASES?.PLANNING: return 'Route Planning';
+      case PHASES?.EXECUTION: return 'Journey Execution';
+      case PHASES?.RESULT: return 'Final Results';
+      default: return 'System Map';
+    }
+  };
+
+  const getSubTitle = () => {
+    if (phase === PHASES?.PLANNING && currentGame) {
+      return `Target: ${currentGame.start.name} to ${currentGame.destination.name}`;
+    }
+    return '';
+  };
 
   // Prevent body scroll when map is in theater mode
   useEffect(() => {
@@ -17,114 +68,129 @@ function NetworkMap({ stations, lines, highlightStations, onStationClick, curren
   }, [isExpanded]);
 
   return (
-    <div className={`relative w-full overflow-hidden shadow-2xl border-slate-700 transition-all ${isExpanded ? 'fixed inset-0 z-[100] w-screen h-screen bg-slate-950 p-4 md:p-12' : 'rounded-xl border-4 md:border-8'}`}>
-      
+    <div className={`network-map-outer ${isExpanded ? 'expanded' : 'standard'}`}>
+
       {/* Station Wall Aesthetic (Subway Tiles) - Dark Version */}
-      <div className={`absolute inset-0 bg-slate-900 ${isExpanded ? 'opacity-90' : ''}`} 
-           style={{ 
-             backgroundImage: 'linear-gradient(90deg, transparent 95%, rgba(255,255,255,0.02) 5%), linear-gradient(0deg, transparent 95%, rgba(255,255,255,0.02) 5%)',
-             backgroundSize: '40px 20px' 
-           }}>
+      <div className={`map-background ${isExpanded ? 'dimmed' : ''}`}
+        style={{
+          backgroundImage: 'linear-gradient(90deg, transparent 95%, rgba(255,255,255,0.02) 5%), linear-gradient(0deg, transparent 95%, rgba(255,255,255,0.02) 5%)',
+          backgroundSize: '40px 20px'
+        }}>
       </div>
 
       {/* Industrial Frame Wrapper */}
-      <div className={`relative z-10 bg-slate-950/95 border-slate-700 rounded shadow-2xl flex flex-col transition-all
-        ${isExpanded 
-          ? 'm-0 min-h-full p-4 md:p-10 border-4' 
-          : 'm-0 lg:m-1 p-2 md:p-4 lg:p-6 border-2 md:border-4 min-h-[350px] md:min-h-[550px] lg:min-h-[750px]'}`}>
+      <div className={`industrial-frame ${isExpanded ? 'expanded' : 'standard'}`}>
 
-        
+
         {/* Signage Header */}
-        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 md:mb-10 border-b-2 md:border-b-4 border-slate-700 pb-2 md:pb-6 gap-2 md:gap-4">
-          <div className="flex items-center">
-            <div className="w-8 h-8 md:w-14 md:h-14 bg-white rounded-full flex items-center justify-center mr-2 md:mr-5 flex-shrink-0">
-              <span className="text-black font-black text-sm md:text-2xl">M</span>
-            </div>
-            <div>
-              <h3 className="font-black text-lg md:text-3xl uppercase tracking-tighter leading-none mb-0.5 md:mb-1 text-white">System Map</h3>
-              <p className="text-[7px] md:text-[10px] font-bold text-slate-500 uppercase tracking-[0.1em] md:tracking-[0.2em]">Network Authority • v2.6</p>
+        <header className="map-header">
+          <div className="header-left">
+            <div className="header-titles">
+              <h3>{getTitle()}</h3>
+              <p className="header-subtitle">{getSubTitle()}</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 w-full sm:w-auto text-white">
-             <button 
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border-2 border-slate-600 px-3 py-1 font-black text-[9px] md:text-xs uppercase transition shadow-[2px_2px_0_0_rgba(0,0,0,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
-             >
-                {isExpanded ? '⏹ Minimize' : '⛶ Maximize'}
-             </button>
-             <div className="bg-yellow-400 px-2 py-1 font-black text-[9px] md:text-xs uppercase transform -rotate-1 shadow-sm border-2 border-black/10 text-black">
-               Service Normal
-             </div>
+          <div className="header-right">
+            {phase === PHASES?.SETUP && (
+              <button onClick={onStart} className="expand-button action-btn-blue">START RACE</button>
+            )}
+
+            {phase === PHASES?.PLANNING && (
+              <>
+                <div className={`timer-compact ${timeLeft < 20 ? 'timer-urgent' : 'timer-normal'}`}>
+                  {String(timeLeft).padStart(2, '0')}s
+                </div>
+                <button onClick={onSubmit} className="expand-button action-btn-green">FINISH PLAN</button>
+              </>
+            )}
+
+            {phase === PHASES?.RESULT && (
+              <button onClick={onRestart} className="expand-button action-btn-blue">NEW GAME</button>
+            )}
+
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="expand-button"
+            >
+              {isExpanded ? '⏹ Minimize' : '⛶ Maximize'}
+            </button>
           </div>
         </header>
-        
-        {/* Dynamic SVG Map Container - Centered & Scrollable on Mobile */}
-        <div className="flex-1 w-full overflow-auto bg-slate-900/50 rounded border border-slate-800 p-0 md:p-4 shadow-inner custom-scrollbar flex items-center justify-center">
-          <div className="min-w-[800px] md:min-w-0 w-full h-full flex items-center justify-center m-auto">
-            <div className="w-full h-full flex items-center justify-center">
-              <MapCanvas 
-                stations={stations}
-                lines={lines}
-                highlightStations={highlightStations}
-                onStationClick={onStationClick}
-                currentStationId={currentStationId}
-                showLines={showLines}
-                characterState={characterState}
-                walkProgress={walkProgress}
-                currentSegment={currentSegment}
-                palette={LINE_PALETTE}
-                gameResult={gameResult}
-                execStep={execStep}
-                phase={phase}
-                selectedRoute={selectedRoute}
-                character={character}
-                />
-            </div>
-          </div>
-        </div>
 
-        {/* Mobile Scroll Hint */}
-        <div className="md:hidden mt-2 flex justify-center">
-           <span className="text-[8px] font-bold text-blue-500 animate-pulse uppercase tracking-widest flex items-center gap-1">
-             ← Swipe Map to Navigate →
-           </span>
+        {/* Dynamic SVG Map Container - Pannable & Zoomable */}
+        <div className="canvas-container">
+          <TransformWrapper
+            initialScale={1}
+            minScale={0.4}
+            maxScale={4}
+            wheel={{ step: 0.001 }}
+            pinch={{ step: 5 }}
+            doubleClick={{ disabled: false, step: 0.7 }}
+            centerOnInit
+          >
+            <ZoomControls />
+            <TransformComponent
+              wrapperStyle={{ width: '100%', height: '100%' }}
+              contentStyle={{ width: '100%', height: '100%' }}
+            >
+              <div className="canvas-content-wrapper">
+                <MapCanvas
+                  stations={stations}
+                  lines={lines}
+                  highlightStations={highlightStations}
+                  onStationClick={onStationClick}
+                  currentStationId={currentStationId}
+                  showLines={showLines}
+                  characterState={characterState}
+                  walkProgress={walkProgress}
+                  currentSegment={currentSegment}
+                  palette={LINE_PALETTE}
+                  gameResult={gameResult}
+                  execStep={execStep}
+                  phase={phase}
+                  selectedRoute={selectedRoute}
+                  character={character}
+                />
+              </div>
+            </TransformComponent>
+          </TransformWrapper>
         </div>
 
         {/* Footer - Detailed Station Info */}
-        <footer className="mt-6 md:mt-10 pt-4 md:pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-4 grayscale opacity-70">
-           <div className="flex flex-wrap gap-6 md:gap-12">
-              <div className="space-y-1">
-                 <p className="text-[8px] md:text-[10px] font-black uppercase text-slate-500 tracking-widest">Accessibility</p>
-                 <div className="flex gap-3 text-lg md:text-xl">♿ 🛗 🚾</div>
+        <footer className="map-footer">
+          <div className="footer-left">
+            <div className="footer-section">
+              <p className="footer-label">Accessibility</p>
+              <div className="accessibility-icons">♿ 🛗 🚾</div>
+            </div>
+            <div className="footer-section footer-section-large">
+              <p className="footer-label">Transfer Points</p>
+              <div className="transfer-points">
+                {lines.map((l, idx) => (
+                  <div key={l.id} className="flex items-center group">
+                    <span className="line-indicator"
+                      style={{ backgroundColor: LINE_PALETTE[idx % LINE_PALETTE.length] }}>
+                      {l.name.charAt(0)}
+                    </span>
+                  </div>
+                ))}
               </div>
-              <div className="space-y-2">
-                 <p className="text-[8px] md:text-[10px] font-black uppercase text-slate-500 tracking-widest">Transfer Points</p>
-                 <div className="flex flex-wrap gap-1.5">
-                    {lines.map((l, idx) => (
-                      <div key={l.id} className="flex items-center group">
-                        <span className="w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center text-[9px] md:text-[11px] font-black text-white shadow-sm transition-transform group-hover:scale-110" 
-                              style={{ backgroundColor: LINE_PALETTE[idx % LINE_PALETTE.length] }}>
-                          {l.name.charAt(0)}
-                        </span>
-                      </div>
-                    ))}
-                 </div>
-              </div>
-           </div>
-           
-           <div className="flex flex-col items-end gap-1">
-              <div className="text-[8px] md:text-[9px] font-mono text-slate-500 font-bold tracking-tighter">
-                REF_ID: 0x48FA_SUB_NW_2026
-              </div>
-              <div className="text-[7px] uppercase font-black text-slate-600">
-                Printed via Terminal Engine v4.2
-              </div>
-           </div>
+            </div>
+          </div>
+
+          <div className="footer-right">
+            <div className="footer-id">
+              REF_ID: 0x48FA_SUB_NW_2026
+            </div>
+            <div className="footer-engine">
+              Printed via Terminal Engine v4.2
+            </div>
+          </div>
         </footer>
       </div>
 
       {/* Glass/Dust Effect Layer */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-white/0 via-transparent to-white/5 opacity-30"></div>
+      <div className="glass-layer"></div>
     </div>
   );
 }

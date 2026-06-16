@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import api from '../services/api';
+import { computeSubwayLayout } from '../components/network/layoutAlgorithm';
 
 export const PHASES = {
   SETUP: 'SETUP',
@@ -8,7 +9,7 @@ export const PHASES = {
   RESULT: 'RESULT'
 };
 
-export function useGame(allSegments, stations = []) {
+export function useGame(allSegments, stations = [], lines = []) {
   const [phase, setPhase] = useState(PHASES.SETUP);
   const [selectedCharacter, setSelectedCharacter] = useState('Player');
   const [currentGame, setCurrentGame] = useState(null);
@@ -20,27 +21,17 @@ export function useGame(allSegments, stations = []) {
 
   const timerRef = useRef(null);
   const animRef = useRef(null);
+  const coordsRef = useRef({});
 
-  // Helper to get coordinates for distance calculation
-  // Replicates MapCanvas logic to keep speeds consistent
+  // Keep a memoised copy of the layout coords so the animation closure can access them
+  useEffect(() => {
+    if (stations.length && lines.length) {
+      coordsRef.current = computeSubwayLayout(stations, lines, 1000, 1000);
+    }
+  }, [stations, lines]);
+
   const getCoords = (stationId) => {
-    if (!stations.length) return { x: 0, y: 0 };
-    const idx = stations.findIndex(s => s.id === stationId);
-    if (idx === -1) return { x: 0, y: 0 };
-
-    const baseWidth = 1200;
-    const baseHeight = 500;
-    const gridPadding = 40;
-    const cols = Math.ceil(Math.sqrt(stations.length)) + 1;
-    const xStep = (baseWidth - 2 * gridPadding) / (cols - 1);
-    const yStep = (baseHeight - 2 * gridPadding) / (Math.ceil(stations.length / (cols - 1)));
-
-    const col = idx % (cols - 1);
-    const row = Math.floor(idx / (cols - 1));
-    return {
-      x: gridPadding + col * xStep + (row % 2 === 0 ? 0 : xStep / 2),
-      y: gridPadding + row * yStep
-    };
+    return coordsRef.current[stationId] ?? { x: 0, y: 0 };
   };
 
   // Timer logic

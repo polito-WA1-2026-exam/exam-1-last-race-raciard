@@ -4,42 +4,30 @@ import StationMarker from './StationMarker';
 import CharacterSprite from './CharacterSprite';
 import JourneyPath from './JourneyPath';
 import PlanningPath from './PlanningPath';
+import { computeSubwayLayout } from './layoutAlgorithm';
+import './MapCanvas.css';
 
 function MapCanvas({ stations, lines, highlightStations, currentStationId, onStationClick, showLines, characterState = 'idle', walkProgress = 0, currentSegment = null, palette = [], gameResult = null, execStep = 0, phase, selectedRoute = [], character = 'Player' }) {
-  const baseWidth = 1200;
-  const baseHeight = 500;
-  const gridPadding = 40;
+  const baseWidth = 1000;
+  const baseHeight = 1000;
 
-  // 1. Calculate dynamic grid coordinates for stations (logical grid)
-  const cols = Math.ceil(Math.sqrt(stations.length)) + 1;
-  const rows = Math.ceil(stations.length / (cols - 1)) + 1;
-  const xStep = (baseWidth - 2 * gridPadding) / (cols - 1);
-  const yStep = (baseHeight - 2 * gridPadding) / (rows - 1);
+  // 1. Compute topology-aware station coordinates
+  const dynamicStationCoords = React.useMemo(
+    () => computeSubwayLayout(stations, lines, baseWidth, baseHeight),
+    [stations, lines]
+  );
 
-  const dynamicStationCoords = {};
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-
-  stations.forEach((s, idx) => {
-    const col = idx % (cols - 1);
-    const row = Math.floor(idx / (cols - 1));
-    const x = gridPadding + col * xStep + (row % 2 === 0 ? 0 : xStep / 2);
-    const y = gridPadding + row * yStep;
-
-    dynamicStationCoords[s.id] = { x, y };
-
-    // Track bounds for viewBox optimization
-    minX = Math.min(minX, x);
-    minY = Math.min(minY, y);
-    maxX = Math.max(maxX, x);
-    maxY = Math.max(maxY, y);
-  });
-
-  // 2. Optimize ViewBox: "Shrink-wrap" around the stations with safe margins
-  const margin = 70; // Safe space for labels and character
+  // 2. ViewBox: fit the computed bounding box with a margin
+  const margin = 80;
+  const allCoords = Object.values(dynamicStationCoords);
+  const minX = allCoords.length ? Math.min(...allCoords.map(c => c.x)) : 0;
+  const maxX = allCoords.length ? Math.max(...allCoords.map(c => c.x)) : baseWidth;
+  const minY = allCoords.length ? Math.min(...allCoords.map(c => c.y)) : 0;
+  const maxY = allCoords.length ? Math.max(...allCoords.map(c => c.y)) : baseHeight;
   const vbX = minX - margin;
-  const vbY = minY - margin - 30; // Extra top room for character
-  const vbWidth = (maxX - minX) + 2 * margin;
-  const vbHeight = (maxY - minY) + 2 * margin + 30;
+  const vbY = minY - margin;
+  const vbWidth  = (maxX - minX) + margin * 2;
+  const vbHeight = (maxY - minY) + margin * 2;
 
   // Calculate interchanges
   const stationLineCounts = {};
@@ -72,7 +60,7 @@ function MapCanvas({ stations, lines, highlightStations, currentStationId, onSta
   return (
     <svg
       viewBox={`${vbX} ${vbY} ${vbWidth} ${vbHeight}`}
-      className="w-full h-full drop-shadow-2xl"
+      className="map-canvas-svg"
       preserveAspectRatio="xMidYMid meet"
     >
       <defs>

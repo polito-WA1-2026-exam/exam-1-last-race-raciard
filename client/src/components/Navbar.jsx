@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import './Navbar.css';
 
 function Navbar() {
   const { user, login, logout } = useAuth();
@@ -12,39 +13,54 @@ function Navbar() {
     e.preventDefault();
     try {
       await login(username, password);
+      setUsername('');
+      setPassword('');
       setError('');
-    } catch (err) {
-      setError('Error');
+    } catch {
+      setError('ACCESS DENIED');
     }
   };
 
   return (
-    <nav className="border-b border-slate-800 p-4 flex justify-between items-center bg-slate-900 text-slate-200">
-      <div className="flex gap-6 items-center">
-        <Link to="/" className="text-xl font-bold text-blue-400">Last Race</Link>
-        <div className="flex gap-4 text-sm">
-          <NavLink to="/" className={({ isActive }) => isActive ? 'font-bold text-white' : 'text-slate-400 hover:text-white transition'}>Game</NavLink>
-          <NavLink to="/ranking" className={({ isActive }) => isActive ? 'font-bold text-white' : 'text-slate-400 hover:text-white transition'}>Ranking</NavLink>
+    <nav className="navbar">
+      {/* Left: system identity */}
+      <div className="navbar-identity">
+        <Link to="/" className="navbar-logo">
+          <span className="logo-title">LAST<span className="logo-accent">RACE</span></span>
+        </Link>
+        <span className="navbar-separator">|</span>
+        <div className="navbar-tabs">
+          <NavLink to="/" end className={({ isActive }) => `navbar-tab ${isActive ? 'navbar-tab--active' : ''}`}>
+            <span className="tab-dot"></span>GAME
+          </NavLink>
+          <NavLink to="/ranking" className={({ isActive }) => `navbar-tab ${isActive ? 'navbar-tab--active' : ''}`}>
+            <span className="tab-dot"></span>RANKING
+          </NavLink>
         </div>
       </div>
 
-      <div>
+      {/* Right: agent access */}
+      <div className="navbar-auth">
         {user ? (
-          <div className="flex items-center gap-4">
-            <span className="text-sm">Hi, {user.username}</span>
-            <button onClick={logout} className="text-sm border border-slate-700 px-2 py-1 hover:bg-slate-800 transition">Logout</button>
+          <div className="agent-panel">
+            <span className="agent-name">{user.username.toUpperCase()}</span>
+            <button onClick={logout} className="agent-logout">⏻</button>
           </div>
         ) : (
-          <form onSubmit={handleLogin} className="flex gap-2 text-sm">
-            <input 
-              type="text" placeholder="User" value={username} onChange={e => setUsername(e.target.value)}
-              className="bg-slate-800 border border-slate-700 p-1 w-24 focus:outline-none focus:border-blue-500" required 
+          <form onSubmit={handleLogin} className="terminal-form">
+            {error && <span className="terminal-error">{error}</span>}
+            <span className="terminal-prompt">&gt;_</span>
+            <input
+              type="text" placeholder="ID" value={username}
+              onChange={e => { setUsername(e.target.value); setError(''); }}
+              className="terminal-input" required autoComplete="username"
             />
-            <input 
-              type="password" placeholder="Pass" value={password} onChange={e => setPassword(e.target.value)}
-              className="bg-slate-800 border border-slate-700 p-1 w-24 focus:outline-none focus:border-blue-500" required 
+            <input
+              type="password" placeholder="KEY" value={password}
+              onChange={e => { setPassword(e.target.value); setError(''); }}
+              className="terminal-input" required autoComplete="current-password"
             />
-            <button type="submit" className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition">Login</button>
+            <button type="submit" className="terminal-submit">ACCESS</button>
           </form>
         )}
       </div>

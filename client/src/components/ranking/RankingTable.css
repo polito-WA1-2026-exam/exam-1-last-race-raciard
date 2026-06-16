@@ -1,0 +1,83 @@
+.ranking-table-container {
+  overflow: hidden;
+  border: 1px solid var(--slate-800);
+  border-radius: 0.5rem; /* rounded-lg */
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* shadow-xl */
+}
+
+.ranking-table {
+  width: 100%;
+  text-align: left;
+  background-color: var(--slate-900);
+  border-collapse: collapse;
+}
+
+.ranking-table thead {
+  background-color: rgba(30, 41, 59, 0.5); /* bg-slate-800/50 */
+  border-bottom: 1px solid var(--slate-800);
+}
+
+.ranking-table th {
+  padding: 0.75rem 1rem; /* py-3 px-4 */
+  font-size: 10px;
+  font-weight: 900;
+  color: var(--slate-500);
+  text-transform: uppercase;
+  letter-spacing: 0.1em; /* tracking-widest */
+}
+
+.ranking-table th.text-right,
+.ranking-table td.text-right {
+  text-align: right;
+}
+
+.ranking-row {
+  border-bottom: 1px solid var(--slate-800);
+}
+
+.ranking-row:last-child {
+  border-bottom: 0;
+}
+
+.ranking-row.top-three {
+  background-color: rgba(30, 58, 138, 0.1); /* bg-blue-900/10 */
+}
+
+.ranking-row td {
+  padding: 1rem; /* py-4 px-4 */
+}
+
+.rank-badge {
+  font-weight: 700;
+  color: var(--slate-500);
+}
+
+.player-name {
+  font-weight: 700;
+  color: var(--slate-200);
+  text-transform: uppercase;
+  letter-spacing: -0.05em; /* tracking-tighter */
+}
+
+.best-score {
+  font-weight: 900;
+  color: var(--blue-400);
+  font-variant-numeric: tabular-nums;
+}
+
+.score-unit {
+  font-size: 10px;
+  margin-left: 0.25rem; /* ml-1 */
+  color: var(--slate-500);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.empty-ranking {
+  padding: 3rem 0; /* py-12 */
+  text-align: center;
+  font-size: 0.75rem; /* text-xs */
+  color: var(--gray-500);
+  font-style: italic;
+  text-transform: uppercase;
+}

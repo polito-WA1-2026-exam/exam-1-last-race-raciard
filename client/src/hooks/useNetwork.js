@@ -11,13 +11,21 @@ export function useNetwork() {
   const fetchNetwork = async () => {
     try {
       setLoading(true);
-      const [s, l, segs] = await Promise.all([
-        api.get('/stations'),
-        api.get('/lines'),
-        api.get('/segments')
-      ]);
+      const { stations: s, lines: l } = await api.get('/network');
       setStations(s);
       setLines(l);
+      // Derive segments from consecutive stations on each line
+      const segs = [];
+      for (const line of l) {
+        const sorted = [...line.stations].sort((a, b) => a.position - b.position);
+        for (let i = 0; i < sorted.length - 1; i++) {
+          segs.push({
+            s1_id: sorted[i].id,   s1_name: sorted[i].name,
+            s2_id: sorted[i+1].id, s2_name: sorted[i+1].name,
+            line_id: line.id,      line_name: line.name
+          });
+        }
+      }
       setSegments(segs);
     } catch (err) {
       setError(err);

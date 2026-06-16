@@ -1,0 +1,223 @@
+/* Navbar: subway HUD / departure-board aesthetic */
+
+.navbar {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  background-color: var(--slate-950);
+  border-bottom: 2px solid var(--slate-800);
+  flex-shrink: 0;
+  gap: 1rem;
+  font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.navbar-identity {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.logo-badge {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: var(--blue-500);
+  color: var(--white);
+  font-size: 0.75rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-title {
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--slate-300);
+}
+
+.logo-accent {
+  font-size: 1.75rem;
+  font-weight: 1000;
+  color: var(--blue-700);
+}
+
+.navbar-separator {
+  color: var(--slate-700);
+  font-size: 0.875rem;
+  user-select: none;
+}
+
+.navbar-tabs {
+  display: flex;
+}
+
+.navbar-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0 0.65rem;
+  height: 44px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--slate-500);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.navbar-tab:hover {
+  color: var(--slate-200);
+}
+
+.navbar-tab--active {
+  color: var(--white);
+  border-bottom-color: var(--blue-500);
+}
+
+.tab-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: currentColor;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.navbar-tab--active .tab-dot {
+  opacity: 1;
+  background-color: var(--blue-400);
+}
+
+.navbar-auth {
+  flex-shrink: 0;
+}
+
+.agent-panel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--slate-900);
+  border: 1px solid var(--slate-700);
+  border-radius: 2px;
+  padding: 0.2rem 0.5rem 0.2rem 0.6rem;
+}
+
+.agent-label {
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--slate-500);
+  text-transform: uppercase;
+}
+
+.agent-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--blue-300);
+}
+
+.agent-logout {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--slate-500);
+  padding: 0 0.1rem;
+  transition: color 0.15s;
+  display: flex;
+  align-items: center;
+
+
+  font-size: 1.6rem;
+  line-height: 0;
+  position: relative;
+  top: -2px;
+}
+
+.agent-logout:hover {
+  color: var(--red-400);
+}
+
+.terminal-form {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: var(--slate-900);
+  border: 1px solid var(--slate-700);
+  border-radius: 2px;
+  padding: 0.2rem 0.5rem;
+}
+
+.terminal-prompt {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--blue-500);
+  user-select: none;
+}
+
+.terminal-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--slate-700);
+  color: var(--slate-200);
+  font-size: 0.7rem;
+  font-family: inherit;
+  letter-spacing: 0.05em;
+  width: 5rem;
+  padding: 0.1rem 0.15rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.terminal-input::placeholder {
+  color: var(--slate-600);
+  letter-spacing: 0.1em;
+}
+
+.terminal-input:focus {
+  border-bottom-color: var(--blue-500);
+}
+
+.terminal-submit {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  background-color: var(--blue-600);
+  color: var(--white);
+  border: none;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  border-radius: 1px;
+  transition: background-color 0.15s;
+}
+
+.terminal-submit:hover {
+  background-color: var(--blue-500);
+}
+
+.terminal-error {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--red-400);
+  text-transform: uppercase;
+}

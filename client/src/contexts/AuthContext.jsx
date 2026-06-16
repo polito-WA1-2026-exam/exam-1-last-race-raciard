@@ -29,7 +29,11 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
-    await api.delete('/sessions/current');
+    try {
+      await api.delete('/sessions/current');
+    } catch {
+      // session may already be invalid; clear local state regardless
+    }
     setUser(null);
   };
 

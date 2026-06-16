@@ -1,9 +1,10 @@
 import React from 'react';
 import StationItem from './StationItem';
+import './MapCanvas.css';
 
 function StationGrid({ stations, highlightStations, currentStationId, onStationClick }) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+    <div className="station-grid">
       {stations.map(station => (
         <StationItem 
           key={station.id}

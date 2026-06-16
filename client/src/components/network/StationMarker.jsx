@@ -1,9 +1,10 @@
 import React from 'react';
+import './MapCanvas.css';
 
 function StationMarker({ station, coords, isTarget, isCurrent, canClick, onClick, isInterchange }) {
   return (
     <g
-      className={`transition-all duration-300 ${canClick ? 'cursor-pointer' : ''}`}
+      className={`station-marker-group ${canClick ? 'clickable' : ''}`}
       onClick={() => canClick && onClick(station.id)}
     >
       {/* Background glow for current/target */}
@@ -40,8 +41,8 @@ function StationMarker({ station, coords, isTarget, isCurrent, canClick, onClick
         y={coords.y + 28}
         textAnchor="middle"
         className={`
-          text-[13px] font-black tracking-tighter uppercase select-none
-          ${isTarget ? 'fill-yellow-500' : isCurrent ? 'fill-blue-400' : 'fill-slate-300'}
+          station-label-text
+          ${isTarget ? 'station-label-target' : isCurrent ? 'station-label-current' : 'station-label-standard'}
         `}
         style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
       >

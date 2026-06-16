@@ -9,9 +9,9 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen bg-slate-950 text-slate-200 transition-colors duration-300">
+        <div className="app-container">
           <Navbar />
-          <main className="w-full">
+          <main className="main-content">
             <Routes>
               <Route path="/" element={<GameView />} />
               <Route path="/ranking" element={<RankingView />} />

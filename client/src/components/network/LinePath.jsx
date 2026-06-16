@@ -1,4 +1,5 @@
 import React from 'react';
+import './MapCanvas.css';
 
 function LinePath({ line, stationCoords, showLines, color }) {
   const points = line.stations
@@ -12,7 +13,7 @@ function LinePath({ line, stationCoords, showLines, color }) {
   }, '');
 
   return (
-    <g opacity={showLines ? 1 : 0} className="transition-all duration-700">
+    <g opacity={showLines ? 1 : 0} className="line-path-group">
       <path
         d={pathData}
         fill="none"
