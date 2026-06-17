@@ -19,7 +19,7 @@ router.post('', function(req, res, next) {
 // DELETE /api/sessions/current (Logout)
 router.delete('/current', (req, res) => {
     req.logout(() => {
-        res.end();
+        res.status(204).end();
     });
 });
 

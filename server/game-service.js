@@ -46,71 +46,66 @@ class GameService {
 
     /**
      * Validate a route.
-     * Route is valid if:
-     * 1. Starts and ends at assigned stations.
-     * 2. Each segment exists on a line.
-     * 3. Line changes only at interchange stations.
+     * Returns null when valid, or a human-readable reason string when invalid.
      */
     async validateRoute(route, currentGame) {
-        const {startId, destinationId, startTime} = currentGame
+        const {startId, destinationId, startTime} = currentGame;
         const currentTime = Date.now();
-        
-        // 90 seconds + 5 seconds grace period for network latency
+
         if ((currentTime - startTime) > 95000) {
             const err = new Error('Planning time exceeded');
             err.type = 'TIMEOUT';
             throw err;
         }
 
-        if (!route || route.length === 0) return false;
-        if (route[0].s1_id !== startId || route[route.length - 1].s2_id !== destinationId) return false;
+        if (!route || route.length === 0)
+            return 'EMPTY ROUTE SUBMITTED';
+
+        if (route[0].s1_id !== startId)
+            return 'ROUTE DOES NOT START AT ASSIGNED STATION';
+
+        if (route[route.length - 1].s2_id !== destinationId)
+            return 'ROUTE DOES NOT REACH DESTINATION';
 
         const adj = await this.networkDao.getAdjacencyList();
+        const stations = await this.networkDao.getStations();
+        const nameOf = (id) => stations.find(s => s.id === id)?.name ?? `#${id}`;
+
         let currentLineId = null;
         const usedLinks = new Set();
 
         for (let i = 0; i < route.length; i++) {
             const segment = route[i];
-            
-            // Link uniqueness check (undirected)
+
+            if (i > 0 && segment.s1_id !== route[i-1].s2_id)
+                return `DISCONNECTED SEGMENT AT ${nameOf(segment.s1_id)}`;
+
             const linkKey = [segment.s1_id, segment.s2_id].sort((a, b) => a - b).join('-');
-            if (usedLinks.has(linkKey)) return false;
+            if (usedLinks.has(linkKey))
+                return `DUPLICATE LINK: ${nameOf(segment.s1_id)} ↔ ${nameOf(segment.s2_id)}`;
             usedLinks.add(linkKey);
 
-            // Check if segment exists and find available lines
             const availableLines = (adj[segment.s1_id] || [])
                 .filter(n => n.to === segment.s2_id)
                 .map(n => n.lineId);
 
-            if (availableLines.length === 0) return false;
+            if (availableLines.length === 0)
+                return `NO TRACK FROM ${nameOf(segment.s1_id)} TO ${nameOf(segment.s2_id)}`;
 
-            if (currentLineId === null) {
-                // First segment, pick any available line
-                currentLineId = availableLines[0];
-            } else if (!availableLines.includes(currentLineId)) {
-                // Line change. Is the current station an interchange?
-                const interchangeLines = (adj[segment.s1_id] || [])
-                    .map(n => n.lineId);
-                const uniqueLines = [...new Set(interchangeLines)];
-                
-                if (uniqueLines.length < 2) return false; // Not an interchange
-                
-                // Change to one of the available lines for this segment
+            if (currentLineId === null || !availableLines.includes(currentLineId)) {
                 currentLineId = availableLines[0];
             }
-
-            // Ensure sequence: next segment s1 must be previous s2
-            if (i > 0 && segment.s1_id !== route[i-1].s2_id) return false;
         }
 
-        return true;
+        return null; // valid
     }
 
     /**
      * Execute the route and apply random events.
+     * failReason is null when valid, or a reason string when invalid.
      */
-    async executeRoute(route, isValid) {
-        if (!isValid) return { score: 0, steps: [] };
+    async executeRoute(route, failReason) {
+        if (failReason !== null) return { isInvalid: true, score: 0, steps: [], failReason };
 
         const events = await this.gameDao.getEvents();
         let coins = 20;
@@ -126,7 +121,7 @@ class GameService {
             });
         }
 
-        return { score: Math.max(0, coins), steps };
+        return { isInvalid: false, score: Math.max(0, coins), steps, failReason: null };
     }
 }
 

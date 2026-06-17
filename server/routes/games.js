@@ -52,9 +52,9 @@ export default function(gameService, gameDao, userDao) {
                 return res.status(400).json({ error: 'No active game' });
             }
 
-            let isValid;
+            let failReason;
             try {
-                isValid = await gameService.validateRoute(route, currentGame);
+                failReason = await gameService.validateRoute(route, currentGame);
             } catch (err) {
                 if (err.type === 'TIMEOUT') {
                     return res.status(403).json({ error: err.message });
@@ -62,7 +62,7 @@ export default function(gameService, gameDao, userDao) {
                 throw err;
             }
 
-            const result = await gameService.executeRoute(route, isValid);
+            const result = await gameService.executeRoute(route, failReason);
 
             // Save result
             await gameDao.addGame(req.user.id, currentGame.startId, currentGame.destinationId, result.score);

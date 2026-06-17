@@ -51,6 +51,18 @@ class NetworkDao {
     }
 
     /**
+     * Get the full network in one query: all stations + all lines with their ordered stations.
+     * Segments are derivable client-side from consecutive line stations.
+     */
+    async getNetwork() {
+        const [stations, lines] = await Promise.all([
+            this.getStations(),
+            this.getLines()
+        ]);
+        return { stations, lines };
+    }
+
+    /**
      * Get all segments (pairs of connected stations on the same line).
      * Returns each physical connection only once.
      */

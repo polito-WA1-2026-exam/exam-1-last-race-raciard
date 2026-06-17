@@ -28,15 +28,15 @@ const port = 3001;
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(cors({
-    origin: 'http://localhost:5173', // Vite default port
-    credentials: true
+  origin: 'http://localhost:5173', // Vite default port
+  credentials: true
 }));
 
 // Setup Session
 app.use(session({
-    secret: 'a secret sentence not to share with anybody and seals all the cookies',
-    resave: false,
-    saveUninitialized: false
+  secret: 'a secret sentence not to share with anybody and seals all the cookies',
+  resave: false,
+  saveUninitialized: false
 }));
 
 // Setup Passport
@@ -44,22 +44,22 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.use(new LocalStrategy(async function verify(username, password, cb) {
-    try {
-        const user = await userDao.getUser(username, password);
-        if (!user)
-            return cb(null, false, 'Incorrect username or password.');
-        return cb(null, user);
-    } catch (err) {
-        return cb(err);
-    }
+  try {
+    const user = await userDao.getUser(username, password);
+    if (!user)
+      return cb(null, false, 'Incorrect username or password.');
+    return cb(null, user);
+  } catch (err) {
+    return cb(err);
+  }
 }));
 
 passport.serializeUser((user, cb) => {
-    cb(null, user);
+  cb(null, user);
 });
 
 passport.deserializeUser((user, cb) => {
-    return cb(null, user);
+  return cb(null, user);
 });
 
 /*** Routes ***/
@@ -69,5 +69,5 @@ app.use('/api', gamesRouter(gameService, gameDao, userDao));
 
 // Start Server
 app.listen(port, () => {
-    console.log(`Server listening at http://localhost:${port}`);
+  console.log(`Server listening at http://localhost:${port}`);
 });

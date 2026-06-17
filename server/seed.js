@@ -4,16 +4,44 @@ import crypto from 'crypto';
 const db = new sqlite3.Database('./database/last-race.db');
 
 const stations = [
+  // Original 12
   "Pietro Smusi Ave.", "Orazio Grinzosi Monument", "Claudio Torres St.", "Bibbiena Square",
   "Porta Belandi", "Borgo Catafratto", "Zephir Boulevard", "Bruno Strati Tower",
-  "Mhanz Road", "Porto Caselli", "Piermenti Gardens", "Bruttovedere"
+  "Mhanz Road", "Porto Caselli", "Piermenti Gardens", "Bruttovedere",
+  // New 6
+  "Valdoria Crossing", "Stellario Park", "Foscari Gate", "Montecchi Heights",
+  "Rialto East", "Canova Bridge"
 ];
+// Station IDs after insert (autoincrement, insertion order):
+//  1 Pietro Smusi Ave.        2 Orazio Grinzosi Monument  3 Claudio Torres St.
+//  4 Bibbiena Square          5 Porta Belandi             6 Borgo Catafratto
+//  7 Zephir Boulevard         8 Bruno Strati Tower        9 Mhanz Road
+// 10 Porto Caselli            11 Piermenti Gardens        12 Bruttovedere
+// 13 Valdoria Crossing        14 Stellario Park           15 Foscari Gate
+// 16 Montecchi Heights        17 Rialto East              18 Canova Bridge
+//
+// Interchange stations:
+//   Claudio Torres St.(3)    → Red + Blue
+//   Bibbiena Square(4)       → Red + Yellow
+//   Porta Belandi(5)         → Blue + Green
+//   Borgo Catafratto(6)      → Blue + Green
+//   Bruno Strati Tower(8)    → Green + Yellow
+//   Valdoria Crossing(13)    → Red + Purple
+//   Porto Caselli(10)        → Yellow + Purple
+//   Foscari Gate(15)         → Green + Purple
+//   Rialto East(17)          → Blue + Purple
 
 const lines = [
-  { name: "Red Line", stations: ["Pietro Smusi Ave.", "Orazio Grinzosi Monument", "Claudio Torres St.", "Bibbiena Square"] },
-  { name: "Blue Line", stations: ["Porta Belandi", "Borgo Catafratto ", "Claudio Torres St.", "Zephir Boulevard"] },
-  { name: "Green Line", stations: ["Porta Belandi", "Borgo Catafratto ", "Bruno Strati Tower", "Mhanz Road"] },
-  { name: "Yellow Line", stations: ["Bibbiena Square", "Bruno Strati Tower", "Porto Caselli", "Piermenti Gardens", "Bruttovedere"] }
+  // Red:    Pietro ─ Orazio ─ Claudio ─ Bibbiena ─ Valdoria ─ Stellario
+  { name: "Red Line",    stations: ["Pietro Smusi Ave.", "Orazio Grinzosi Monument", "Claudio Torres St.", "Bibbiena Square", "Valdoria Crossing", "Stellario Park"] },
+  // Blue:   Porta ─ Borgo ─ Claudio ─ Zephir ─ Rialto East
+  { name: "Blue Line",   stations: ["Porta Belandi", "Borgo Catafratto", "Claudio Torres St.", "Zephir Boulevard", "Rialto East"] },
+  // Green:  Porta ─ Borgo ─ Bruno ─ Mhanz ─ Foscari ─ Montecchi
+  { name: "Green Line",  stations: ["Porta Belandi", "Borgo Catafratto", "Bruno Strati Tower", "Mhanz Road", "Foscari Gate", "Montecchi Heights"] },
+  // Yellow: Bibbiena ─ Bruno ─ Porto ─ Piermenti ─ Bruttovedere
+  { name: "Yellow Line", stations: ["Bibbiena Square", "Bruno Strati Tower", "Porto Caselli", "Piermenti Gardens", "Bruttovedere"] },
+  // Purple: Stellario ─ Valdoria ─ Porto ─ Foscari ─ Canova ─ Rialto
+  { name: "Purple Line", stations: ["Stellario Park", "Valdoria Crossing", "Porto Caselli", "Foscari Gate", "Canova Bridge", "Rialto East"] }
 ];
 
 const events = [
@@ -122,10 +150,13 @@ db.serialize(() => {
 
       // Insert some games for user1 and user2
       if (u.username === "user1") {
-        db.run("INSERT INTO games (user_id, start_station_id, destination_station_id, score) VALUES (?, ?, ?, ?)", [userId, 1, 4, 15]);
-        db.run("INSERT INTO games (user_id, start_station_id, destination_station_id, score) VALUES (?, ?, ?, ?)", [userId, 2, 7, 18]);
+        // Pietro(1) → Bruttovedere(12): 7 hops via Red+Yellow
+        db.run("INSERT INTO games (user_id, start_station_id, destination_station_id, score) VALUES (?, ?, ?, ?)", [userId, 1, 12, 15]);
+        // Rialto East(17) → Orazio(2): 3 hops via Blue+Red
+        db.run("INSERT INTO games (user_id, start_station_id, destination_station_id, score) VALUES (?, ?, ?, ?)", [userId, 17, 2, 18]);
       } else if (u.username === "user2") {
-        db.run("INSERT INTO games (user_id, start_station_id, destination_station_id, score) VALUES (?, ?, ?, ?)", [userId, 5, 9, 10]);
+        // Montecchi Heights(16) → Pietro(1): 7 hops via Green+Blue+Red
+        db.run("INSERT INTO games (user_id, start_station_id, destination_station_id, score) VALUES (?, ?, ?, ?)", [userId, 16, 1, 10]);
       }
     });
   });
