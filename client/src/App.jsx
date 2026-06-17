@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './contexts/AuthContext';
 import GameView from './views/GameView';
 import RankingView from './views/RankingView';
-import Navbar from './components/Navbar';
+import Navbar from './components/layout/Navbar';
 import './App.css';
 
 function App() {

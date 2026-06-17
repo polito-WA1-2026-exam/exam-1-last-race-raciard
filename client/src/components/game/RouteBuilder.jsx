@@ -1,7 +1,9 @@
 import React from 'react';
+import { useGameContext } from '../../contexts/GameContext';
 import './RouteBuilder.css';
 
-function RouteBuilder({ selectedRoute, stations, onUndo }) {
+function RouteBuilder() {
+  const { selectedRoute, stations, undoLastStep: onUndo } = useGameContext();
   return (
     <div className="route-builder">
       <h3 className="route-builder-header">Active Route</h3>

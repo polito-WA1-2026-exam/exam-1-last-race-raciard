@@ -1,7 +1,10 @@
 import React from 'react';
+import { useGameContext } from '../../contexts/GameContext';
+import LineBadge from '../network/LineBadge';
 import './JourneyLog.css';
 
-function JourneyLog({ gameResult, execStep, stations, phase, PHASES }) {
+function JourneyLog() {
+  const { gameResult, execStep, stations, lines, phase, PHASES } = useGameContext();
   return (
     <div className="journey-log-container">
       <div className="score-display">
@@ -19,18 +22,23 @@ function JourneyLog({ gameResult, execStep, stations, phase, PHASES }) {
         
         {gameResult.steps.length === 0 ? (
           <div className="failure-card">
-            <p className="failure-title">SYSTEM_FAILURE</p>
+            <p className="failure-title">MISSION FAILED</p>
             <p className="failure-message">
-              {gameResult.error || 'NETWORK_DISCONTINUITY_DETECTED'}
+              {gameResult.failReason || 'NETWORK DISCONTINUITY DETECTED'}
             </p>
           </div>
         ) : (
           <div className="step-list">
             {gameResult.steps.slice(0, execStep).map((step, i) => (
               <div key={i} className="step-card">
-                <p className="step-route">
-                  {stations.find(s => s.id === step.segment.s1_id)?.name} → {stations.find(s => s.id === step.segment.s2_id)?.name}
-                </p>
+                <div className="step-header">
+                  {step.lineId && lines.length > 0 && (
+                    <LineBadge line={lines.find(l => l.id === step.lineId) ?? { id: step.lineId, name: '?' }} lines={lines} />
+                  )}
+                  <p className="step-route">
+                    {stations.find(s => s.id === step.segment.s1_id)?.name} → {stations.find(s => s.id === step.segment.s2_id)?.name}
+                  </p>
+                </div>
                 <p className="step-event">"{step.event.description}"</p>
                 <p className={`step-effect ${step.event.effect >= 0 ? 'effect-positive' : 'effect-negative'}`}>
                   {step.event.effect >= 0 ? '+' : ''}{step.event.effect} COINS

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import api from '../services/api';
-import { computeSubwayLayout } from '../components/network/layoutAlgorithm';
+import { computeSubwayLayout } from '../utils/layoutAlgorithm';
 
 export const PHASES = {
   SETUP: 'SETUP',
@@ -191,24 +191,24 @@ export function useGame(allSegments, stations = [], lines = []) {
       const result = await api.post('/games/result', { route: selectedRoute });
 
       let finalResult;
-      if (result.steps.length === 0 && selectedRoute.length > 0) {
-        // INVALID ROUTE
+      if (result.isInvalid) {
+        // INVALID ROUTE — animate client-side steps so the character walks to the failure point
         const animationSteps = calculateInvalidAnimationSteps(selectedRoute);
-        finalResult = { 
-          score: 0, 
-          steps: animationSteps, 
+        finalResult = {
+          score: 0,
+          steps: animationSteps,
           isInvalid: true,
-          error: 'SYSTEM_FAILURE: INVALID_CONNECTION' 
+          failReason: result.failReason || 'INVALID ROUTE'
         };
       } else {
-        // VALID ROUTE
+        // VALID ROUTE — enrich server steps with lineId from local adjacency
         const enrichedSteps = calculateInvalidAnimationSteps(selectedRoute);
         const finalSteps = result.steps.map((s, i) => ({
           ...s,
           lineId: enrichedSteps[i]?.lineId,
           isFailed: false
         }));
-        finalResult = { ...result, steps: finalSteps };
+        finalResult = { ...result, steps: finalSteps, isInvalid: false, failReason: null };
       }
 
       // Update data state first

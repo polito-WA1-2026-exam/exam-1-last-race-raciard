@@ -86,12 +86,18 @@
   transition: background-color 0.2s;
 }
 
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.25rem;
+}
+
 .step-route {
   font-size: 9px;
   font-weight: 700;
   color: var(--slate-500);
   text-transform: uppercase;
-  margin-bottom: 0.25rem; /* mb-1 */
 }
 
 .step-event {

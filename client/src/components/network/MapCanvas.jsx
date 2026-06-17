@@ -1,13 +1,12 @@
 import React from 'react';
-import LinePath from './LinePath';
+import RoutePath from './RoutePath';
 import StationMarker from './StationMarker';
 import CharacterSprite from './CharacterSprite';
-import JourneyPath from './JourneyPath';
-import PlanningPath from './PlanningPath';
-import { computeSubwayLayout } from './layoutAlgorithm';
+import { computeSubwayLayout } from '../../utils/layoutAlgorithm';
+import { LINE_PALETTE, getLineColor } from '../../utils/linePalette';
 import './MapCanvas.css';
 
-function MapCanvas({ stations, lines, highlightStations, currentStationId, onStationClick, showLines, characterState = 'idle', walkProgress = 0, currentSegment = null, palette = [], gameResult = null, execStep = 0, phase, selectedRoute = [], character = 'Player' }) {
+function MapCanvas({ stations, lines, highlightStations, currentStationId, onStationClick, showLines, characterState = 'idle', walkProgress = 0, currentSegment = null, gameResult = null, execStep = 0, phase, selectedRoute = [], character = 'Player' }) {
   const baseWidth = 1000;
   const baseHeight = 1000;
 
@@ -72,31 +71,34 @@ function MapCanvas({ stations, lines, highlightStations, currentStationId, onSta
       {/* Background grid */}
       <rect x={vbX} y={vbY} width={vbWidth} height={vbHeight} fill="url(#smallGrid)" />
 
-      {/* Planned Route (Grey lines during planning) */}
+      {/* Planned Route (grey dashed preview during planning) */}
       {phase === 'PLANNING' && (
-        <PlanningPath 
-          selectedRoute={selectedRoute} 
-          dynamicStationCoords={dynamicStationCoords} 
+        <RoutePath
+          variant="planning"
+          stationCoords={dynamicStationCoords}
+          segments={selectedRoute}
         />
       )}
 
-      {/* Traversed Journey Trail (Leaves behind the line) */}
-      <JourneyPath
-        steps={gameResult?.steps}
+      {/* Traversed Journey Trail */}
+      <RoutePath
+        variant="journey"
+        stationCoords={dynamicStationCoords}
+        segments={gameResult?.steps?.map(s => s.segment) ?? []}
+        colors={gameResult?.steps?.map(s => getLineColor(s.lineId, lines)) ?? []}
         execStep={execStep}
         walkProgress={walkProgress}
-        dynamicStationCoords={dynamicStationCoords}
-        palette={palette}
       />
 
-      {/* Draw Lines */}
+      {/* Network lines */}
       {lines.map((line, idx) => (
-        <LinePath
+        <RoutePath
           key={line.id}
-          line={line}
+          variant="network"
           stationCoords={dynamicStationCoords}
-          showLines={showLines}
-          color={palette[idx % palette.length]}
+          waypoints={[...line.stations].sort((a, b) => a.position - b.position).map(s => s.id)}
+          color={LINE_PALETTE[idx % LINE_PALETTE.length]}
+          visible={showLines}
         />
       ))}
 
