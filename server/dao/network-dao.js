@@ -2,7 +2,8 @@ import db from '../db.js';
 
 class NetworkDao {
     /**
-     * Get all stations from the database.
+     * Retrieves all transit stations from the database.
+     * @returns {Promise<Array<{id: number, name: string}>>} A promise that resolves to an array of station objects.
      */
     getStations() {
         return new Promise((resolve, reject) => {
@@ -15,7 +16,8 @@ class NetworkDao {
     }
 
     /**
-     * Get all lines and their stations.
+     * Retrieves all transit lines, each with its ordered list of stations.
+     * @returns {Promise<Array<{id: number, name: string, stations: Array<{id: number, name: string, position: number}>}>>} A promise that resolves to an array of line objects.
      */
     getLines() {
         return new Promise((resolve, reject) => {
@@ -51,8 +53,8 @@ class NetworkDao {
     }
 
     /**
-     * Get the full network in one query: all stations + all lines with their ordered stations.
-     * Segments are derivable client-side from consecutive line stations.
+     * Retrieves the full transit network in a single call, combining all stations and lines.
+     * @returns {Promise<{stations: Array<{id: number, name: string}>, lines: Array<{id: number, name: string, stations: Array<{id: number, name: string, position: number}>}>}>} A promise resolving to the network structure.
      */
     async getNetwork() {
         const [stations, lines] = await Promise.all([
@@ -63,8 +65,9 @@ class NetworkDao {
     }
 
     /**
-     * Get all segments (pairs of connected stations on the same line).
-     * Returns each physical connection only once.
+     * Retrieves all physical segments (connections between consecutive stations on a line).
+     * Each connection is returned only in one direction from database connections.
+     * @returns {Promise<Array<{s1_id: number, s1_name: string, s2_id: number, s2_name: string, line_id: number, line_name: string}>>} A promise resolving to an array of segment objects.
      */
     getSegments() {
         return new Promise((resolve, reject) => {
@@ -86,8 +89,9 @@ class NetworkDao {
     }
 
     /**
-     * Get an adjacency list of the network.
-     * Each station ID maps to an array of objects { to: stationId, lineId: lineId }
+     * Generates a bidirectional adjacency list of the network for pathfinding and validation.
+     * Each station ID maps to an array of adjacent station details.
+     * @returns {Promise<Object<number, Array<{to: number, lineId: number}>>>} A promise resolving to the adjacency list.
      */
     async getAdjacencyList() {
         const segments = await this.getSegments();

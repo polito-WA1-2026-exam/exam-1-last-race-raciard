@@ -3,7 +3,9 @@ import crypto from 'crypto';
 
 class UserDao {
     /**
-     * Get user by id.
+     * Retrieves a user by their user ID.
+     * @param {number} id - The ID of the user.
+     * @returns {Promise<{id: number, username: string}|{error: string}>} A promise that resolves to the user object (id and username) or an error object if not found.
      */
     getUserById(id) {
         return new Promise((resolve, reject) => {
@@ -20,7 +22,10 @@ class UserDao {
     }
 
     /**
-     * Get user by credentials.
+     * Authenticates a user by checking their username and validating their password hash using scrypt.
+     * @param {string} username - The username to verify.
+     * @param {string} password - The plain-text password to verify.
+     * @returns {Promise<{id: number, username: string}|boolean>} A promise that resolves to the user object if authenticated, or false otherwise.
      */
     getUser(username, password) {
         return new Promise((resolve, reject) => {
@@ -44,7 +49,9 @@ class UserDao {
     }
 
     /**
-     * Get the global ranking (best score for each user).
+     * Retrieves the global user rankings list, containing the best score achieved by each user.
+     * Sorted by best score in descending order.
+     * @returns {Promise<Array<{username: string, best_score: number}>>} A promise resolving to an array of user rankings.
      */
     getRanking() {
         return new Promise((resolve, reject) => {

@@ -22,37 +22,41 @@ const stations = [
 //
 // Interchange stations:
 //   Claudio Torres St.(3)    → Red + Blue
-//   Bibbiena Square(4)       → Red + Yellow
-//   Porta Belandi(5)         → Blue + Green
-//   Borgo Catafratto(6)      → Blue + Green
-//   Bruno Strati Tower(8)    → Green + Yellow
-//   Valdoria Crossing(13)    → Red + Purple
-//   Porto Caselli(10)        → Yellow + Purple
-//   Foscari Gate(15)         → Green + Purple
-//   Rialto East(17)          → Blue + Purple
+//   Bibbiena Square(4)       → Red + Green
+//   Porta Belandi(5)         → Red + Yellow
+//   Porto Caselli(10)        → Blue + Green
+//   Foscari Gate(15)         → Green + Yellow
 
 const lines = [
-  // Red:    Pietro ─ Orazio ─ Claudio ─ Bibbiena ─ Valdoria ─ Stellario
-  { name: "Red Line",    stations: ["Pietro Smusi Ave.", "Orazio Grinzosi Monument", "Claudio Torres St.", "Bibbiena Square", "Valdoria Crossing", "Stellario Park"] },
-  // Blue:   Porta ─ Borgo ─ Claudio ─ Zephir ─ Rialto East
-  { name: "Blue Line",   stations: ["Porta Belandi", "Borgo Catafratto", "Claudio Torres St.", "Zephir Boulevard", "Rialto East"] },
-  // Green:  Porta ─ Borgo ─ Bruno ─ Mhanz ─ Foscari ─ Montecchi
-  { name: "Green Line",  stations: ["Porta Belandi", "Borgo Catafratto", "Bruno Strati Tower", "Mhanz Road", "Foscari Gate", "Montecchi Heights"] },
-  // Yellow: Bibbiena ─ Bruno ─ Porto ─ Piermenti ─ Bruttovedere
-  { name: "Yellow Line", stations: ["Bibbiena Square", "Bruno Strati Tower", "Porto Caselli", "Piermenti Gardens", "Bruttovedere"] },
-  // Purple: Stellario ─ Valdoria ─ Porto ─ Foscari ─ Canova ─ Rialto
-  { name: "Purple Line", stations: ["Stellario Park", "Valdoria Crossing", "Porto Caselli", "Foscari Gate", "Canova Bridge", "Rialto East"] }
+  // Red:    Pietro ─ Orazio ─ Claudio ─ Bibbiena ─ Porta ─ Borgo
+  { name: "Red Line",    stations: ["Pietro Smusi Ave.", "Orazio Grinzosi Monument", "Claudio Torres St.", "Bibbiena Square", "Porta Belandi", "Borgo Catafratto"] },
+  // Blue:   Zephir ─ Bruno ─ Claudio ─ Mhanz ─ Porto ─ Piermenti
+  { name: "Blue Line",   stations: ["Zephir Boulevard", "Bruno Strati Tower", "Claudio Torres St.", "Mhanz Road", "Porto Caselli", "Piermenti Gardens"] },
+  // Green:  Bruttovedere ─ Bibbiena ─ Valdoria ─ Porto ─ Stellario ─ Foscari
+  { name: "Green Line",  stations: ["Bruttovedere", "Bibbiena Square", "Valdoria Crossing", "Porto Caselli", "Stellario Park", "Foscari Gate"] },
+  // Yellow: Montecchi ─ Porta ─ Rialto East ─ Foscari ─ Canova
+  { name: "Yellow Line", stations: ["Montecchi Heights", "Porta Belandi", "Rialto East", "Foscari Gate", "Canova Bridge"] }
 ];
 
 const events = [
   { description: "Quiet journey", effect: 0 },
-  { description: "Wrong platform", effect: -2 },
-  { description: "Kind passenger", effect: 1 },
+  { description: "Wrong platform", effect: -1 },
+  { description: "Kind passenger", effect: 2 },
   { description: "Ticket check", effect: 0 },
-  { description: "Pickpocket", effect: -4 },
+  { description: "Pickpocket", effect: -3 },
   { description: "Found a coin", effect: 2 },
   { description: "Musician at the station", effect: 1 },
-  { description: "Technical fault", effect: -3 }
+  { description: "Technical fault", effect: -2 },
+  { description: "Fast transit", effect: 2 },
+  { description: "Delayed train", effect: -1 },
+  { description: "Vending machine refund", effect: 3 },
+  { description: "Lost your ticket", effect: -2 },
+  { description: "Crowded carriage", effect: 0 },
+  { description: "Empty seat found", effect: 1 },
+  { description: "Fined for snacking", effect: -1 },
+  { description: "Helped a tourist", effect: 2 },
+  { description: "Dropped wallet", effect: -3 },
+  { description: "Found a dropped pass", effect: 4 }
 ];
 
 const users = [
@@ -150,12 +154,12 @@ db.serialize(() => {
 
       // Insert some games for user1 and user2
       if (u.username === "user1") {
-        // Pietro(1) → Bruttovedere(12): 7 hops via Red+Yellow
+        // Pietro(1) → Bruttovedere(12): 4 hops via Red+Green
         db.run("INSERT INTO games (user_id, start_station_id, destination_station_id, score) VALUES (?, ?, ?, ?)", [userId, 1, 12, 15]);
-        // Rialto East(17) → Orazio(2): 3 hops via Blue+Red
+        // Rialto East(17) → Orazio(2): 4 hops via Yellow+Red
         db.run("INSERT INTO games (user_id, start_station_id, destination_station_id, score) VALUES (?, ?, ?, ?)", [userId, 17, 2, 18]);
       } else if (u.username === "user2") {
-        // Montecchi Heights(16) → Pietro(1): 7 hops via Green+Blue+Red
+        // Montecchi Heights(16) → Pietro(1): 5 hops via Yellow+Red
         db.run("INSERT INTO games (user_id, start_station_id, destination_station_id, score) VALUES (?, ?, ?, ?)", [userId, 16, 1, 10]);
       }
     });

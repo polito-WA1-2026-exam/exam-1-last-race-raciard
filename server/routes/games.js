@@ -1,13 +1,37 @@
 import express from 'express';
 const router = express.Router();
 
+/**
+ * Express middleware to check if the request is authenticated.
+ * If not authenticated, returns a 401 response.
+ * @param {Object} req - The Express request object.
+ * @param {Object} res - The Express response object.
+ * @param {Function} next - The next middleware function in the stack.
+ * @returns {void}
+ */
 const isLoggedIn = (req, res, next) => {
     if (req.isAuthenticated()) return next();
     return res.status(401).json({ error: 'Not authenticated' });
 };
 
+/**
+ * Configures and returns the Express router containing routes for game play,
+ * ranking tables, and random transit events retrieval.
+ * @param {Object} gameService - The game service instance handling business logic.
+ * @param {Object} gameDao - The game DAO handling database operations for games.
+ * @param {Object} userDao - The user DAO handling database operations for users.
+ * @returns {Object} The configured Express router object.
+ */
 export default function (gameService, gameDao, userDao) {
-    // GET /api/events
+    /**
+     * GET /api/events
+     * Retrieves all possible random game events.
+     * @name GET/api/events
+     * @function
+     * @memberof module:routes/games
+     * @param {Object} req - Express request object.
+     * @param {Object} res - Express response object.
+     */
     router.get('/events', async (req, res) => {
         try {
             const events = await gameDao.getEvents();
@@ -17,7 +41,15 @@ export default function (gameService, gameDao, userDao) {
         }
     });
 
-    // GET /api/ranking
+    /**
+     * GET /api/ranking
+     * Retrieves the global leaderboard rankings (best score per user). Requires authentication.
+     * @name GET/api/ranking
+     * @function
+     * @memberof module:routes/games
+     * @param {Object} req - Express request object.
+     * @param {Object} res - Express response object.
+     */
     router.get('/ranking', isLoggedIn, async (req, res) => {
         try {
             const ranking = await userDao.getRanking();
@@ -27,7 +59,15 @@ export default function (gameService, gameDao, userDao) {
         }
     });
 
-    // POST /api/games (Start a new game)
+    /**
+     * POST /api/games
+     * Starts a new game by selecting random start/destination stations and storing start state in session. Requires authentication.
+     * @name POST/api/games
+     * @function
+     * @memberof module:routes/games
+     * @param {Object} req - Express request object.
+     * @param {Object} res - Express response object.
+     */
     router.post('/games', isLoggedIn, async (req, res) => {
         try {
             const { start, destination } = await gameService.getRandomStations();
@@ -42,7 +82,17 @@ export default function (gameService, gameDao, userDao) {
         }
     });
 
-    // POST /api/games/result (Submit route and get result)
+    /**
+     * POST /api/games/result
+     * Validates and executes the submitted route, saving the score result to the database and clearing the active session game. Requires authentication.
+     * @name POST/api/games/result
+     * @function
+     * @memberof module:routes/games
+     * @param {Object} req - Express request object.
+     * @param {Object} req.body - The request body.
+     * @param {number[]} req.body.route - Array of station IDs representing the chosen route.
+     * @param {Object} res - Express response object.
+     */
     router.post('/games/result', isLoggedIn, async (req, res) => {
         try {
             const { route } = req.body;

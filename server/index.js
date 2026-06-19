@@ -43,6 +43,13 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+/**
+ * Callback function used by Passport LocalStrategy to verify user credentials.
+ * @param {string} username - The username provided during login.
+ * @param {string} password - The plain-text password provided during login.
+ * @param {Function} cb - The passport done callback, which accepts (err, user, info).
+ * @returns {Promise<void>}
+ */
 passport.use(new LocalStrategy(async function verify(username, password, cb) {
   try {
     const user = await userDao.getUser(username, password);
@@ -54,10 +61,22 @@ passport.use(new LocalStrategy(async function verify(username, password, cb) {
   }
 }));
 
+/**
+ * Serializes the user object into the session.
+ * @param {Object} user - The authenticated user object.
+ * @param {Function} cb - The callback function.
+ * @returns {void}
+ */
 passport.serializeUser((user, cb) => {
   cb(null, user);
 });
 
+/**
+ * Deserializes the user object from the session.
+ * @param {Object} user - The user identification stored in the session.
+ * @param {Function} cb - The callback function.
+ * @returns {void}
+ */
 passport.deserializeUser((user, cb) => {
   return cb(null, user);
 });

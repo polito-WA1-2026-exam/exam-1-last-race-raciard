@@ -1,11 +1,18 @@
 class GameService {
+    /**
+     * Creates an instance of GameService.
+     * @param {Object} networkDao - The data access object for network related operations.
+     * @param {Object} gameDao - The data access object for game related operations.
+     */
     constructor(networkDao, gameDao) {
         this.networkDao = networkDao;
         this.gameDao = gameDao;
     }
 
     /**
-     * Pick a random start and destination station with min 3 stops distance.
+     * Selects a random starting station and a random destination station such that
+     * the shortest path between them consists of at least 3 segments (stops).
+     * @returns {Promise<{start: {id: number, name: string}, destination: {id: number, name: string}}>} A promise that resolves to an object containing the start and destination stations.
      */
     async getRandomStations() {
         const stations = await this.networkDao.getStations();
@@ -45,8 +52,15 @@ class GameService {
     }
 
     /**
-     * Validate a route.
-     * Returns null when valid, or a human-readable reason string when invalid.
+     * Validates if a submitted route is valid according to the active game's rules.
+     * Checks for path continuity, duplicate links, start/end matching, and the 95-second time limit.
+     * @param {number[]} route - Array of station IDs representing the chosen path.
+     * @param {Object} currentGame - The current active game session information.
+     * @param {number} currentGame.startId - The assigned start station ID.
+     * @param {number} currentGame.destinationId - The assigned destination station ID.
+     * @param {number} currentGame.startTime - The timestamp when the game started.
+     * @returns {Promise<string|null>} Resolves to a human-readable failure reason string if invalid, or null if valid.
+     * @throws {Error} Throws a timeout error if the submission is made after the 95-second limit.
      */
     async validateRoute(route, currentGame) {
         const {startId, destinationId, startTime} = currentGame;
@@ -99,8 +113,14 @@ class GameService {
     }
 
     /**
-     * Execute the route and apply random events.
-     * failReason is null when valid, or a reason string when invalid.
+     * Executes the transit of a route, applying random events and calculating the final score/coins.
+     * If validation failed, builds a mock failure step sequence and returns zero score.
+     * @param {number[]} route - Array of station IDs representing the chosen path.
+     * @param {string|null} failReason - The validation failure reason, if the route was already flagged as invalid.
+     * @param {Object} currentGame - The current active game session information.
+     * @param {number} currentGame.startId - The assigned start station ID.
+     * @returns {Promise<{isInvalid: boolean, score: number, steps: Array<{from: number, to: number, event: {description: string, effect: number}, coins: number, lineId: number|null, isFailed: boolean}>, failReason: string|null}>}
+     *          Resolves to the execution result object containing the route validity status, final score, step breakdown, and error reason.
      */
     async executeRoute(route, failReason, currentGame) {
         if (!route || route.length === 0) {
