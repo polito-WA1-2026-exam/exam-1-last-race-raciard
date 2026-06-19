@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { GameProvider, useGameContext, useNetworkContext, PHASES } from '../contexts/GameContext';
 import Instructions from '../components/layout/Instructions';
@@ -6,7 +6,6 @@ import NetworkMap from '../components/network/NetworkMap';
 import RouteBuilder from '../components/game/RouteBuilder';
 import JourneyLog from '../components/game/JourneyLog';
 import { CHARACTERS } from '../components/network/CharacterSprite';
-import { useTimer } from '../hooks/useTimer';
 import './GameView.css';
 
 function GameLayout() {
@@ -14,10 +13,6 @@ function GameLayout() {
     phase,
     currentGame,
     gameResult,
-    startGame,
-    submitRoute,
-    resetToSetup,
-    finishGame
   } = useGameContext();
 
   const { stations, lines, loading: networkLoading } = useNetworkContext();
@@ -26,37 +21,14 @@ function GameLayout() {
   const [selectedCharacter, setSelectedCharacter] = useState('Player');
   const [execStep, setExecStep] = useState(0);
 
-  // Auto-submit the route when timer expires
-  const handleForceSubmit = useCallback(async () => {
-    await submitRoute(selectedRoute);
-  }, [selectedRoute, submitRoute]);
+  const currentGameId = currentGame ? `${currentGame.start.id}-${currentGame.destination.id}` : null;
+  const [prevGameId, setPrevGameId] = useState(null);
 
-  const { timeLeft, start: startTimer } = useTimer(
-    phase === PHASES.PLANNING,
-    handleForceSubmit
-  );
-
-  const handleStartGame = useCallback(async () => {
-    const game = await startGame();
-    if (game) {
-      setSelectedRoute([game.start.id]);
-    } else {
-      setSelectedRoute([]);
-    }
+  if (currentGameId !== prevGameId) {
+    setPrevGameId(currentGameId);
+    setSelectedRoute(currentGame ? [currentGame.start.id] : []);
     setExecStep(0);
-    startTimer(90);
-  }, [startGame, startTimer]);
-
-  const handleResetToSetup = useCallback(() => {
-    resetToSetup();
-    setSelectedRoute([]);
-    setExecStep(0);
-  }, [resetToSetup]);
-
-  const handleSubmitRoute = useCallback(async () => {
-    await submitRoute(selectedRoute);
-    setExecStep(0);
-  }, [selectedRoute, submitRoute]);
+  }
 
   if (networkLoading) return <div className="loading-initializing">Initializing Network...</div>;
 
@@ -65,21 +37,13 @@ function GameLayout() {
       <div className="game-layout">
         <div className="map-section">
           <NetworkMap
-            key={currentGame ? `${currentGame.start.id}-${currentGame.destination.id}` : 'setup'}
-            phase={phase}
-            currentGame={currentGame}
-            gameResult={gameResult}
             selectedRoute={selectedRoute}
-            timeLeft={timeLeft}
+            setSelectedRoute={setSelectedRoute}
+            execStep={execStep}
+            setExecStep={setExecStep}
             selectedCharacter={selectedCharacter}
             stations={stations}
             lines={lines}
-            startGame={handleStartGame}
-            submitRoute={handleSubmitRoute}
-            resetToSetup={handleResetToSetup}
-            setSelectedRoute={setSelectedRoute}
-            setExecStep={setExecStep}
-            finishGame={finishGame}
           />
         </div>
 

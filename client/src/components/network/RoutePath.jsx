@@ -1,18 +1,16 @@
 /**
- * Unified path-drawing component for all three route types.
+ * Unified path-drawing component for all three route types (network, planning, journey).
  *
- * variant="network"
- *   Draws a continuous polyline through ordered station IDs (`waypoints`).
- *   Thick solid stroke + subtle white dashed overlay.  Toggled by `visible`.
- *
- * variant="planning"
- *   Draws each segment in `segments` as an individual dashed gray line.
- *   Used during the planning phase to preview the user's route.
- *
- * variant="journey"
- *   Draws completed and in-progress segments from `segments`.
- *   Each segment can have its own colour via `colors[i]`.
- *   The segment at `execStep` is partially drawn up to `walkProgress`.
+ * @param {object} props
+ * @param {object} props.stationCoords - Map of station IDs to their computed SVG {x, y} coordinates.
+ * @param {Array<string>} [props.waypoints] - (Network) Ordered list of station IDs to draw a continuous line through.
+ * @param {boolean} [props.visible=true] - (Network) Toggles visibility of the line.
+ * @param {string} [props.color='#64748b'] - (Network) The stroke color of the line.
+ * @param {Array<object>} [props.segments] - (Planning/Journey) List of segment objects {s1_id, s2_id}.
+ * @param {Array<string>} [props.colors] - (Journey) Array of colors corresponding to each segment.
+ * @param {number} [props.execStep=0] - (Journey) The current step index during the execution phase.
+ * @param {number} [props.walkProgress=0] - (Journey) The interpolation progress (0-1) along the current execStep.
+ * @param {'network'|'planning'|'journey'} [props.variant='network'] - Discriminator to determine the rendering style.
  */
 function RoutePath({
   stationCoords,

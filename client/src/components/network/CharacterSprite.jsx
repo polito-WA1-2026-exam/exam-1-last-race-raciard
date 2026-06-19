@@ -42,6 +42,20 @@ const CHARACTERS = {
   Zeb: { idle: zeb_idle, walk1: zeb_walk1, walk2: zeb_walk2, win: zeb_idle, lose: zeb_idle },
 };
 
+/**
+ * Renders an animated SVG character sprite that traverses along segments.
+ * Calculates interpolation, bouncing effect, and flip orientation based on coordinates.
+ * 
+ * @param {object} props
+ * @param {number} props.x - The starting X coordinate.
+ * @param {number} props.y - The starting Y coordinate.
+ * @param {number} [props.x2] - The destination X coordinate.
+ * @param {number} [props.y2] - The destination Y coordinate.
+ * @param {number} [props.progress=0] - The progress percentage along the path (0 to 1).
+ * @param {string} [props.state='idle'] - The character animation state ('idle', 'walk', 'win', 'lose').
+ * @param {number} [props.size=50] - The sprite size.
+ * @param {string} [props.character='Player'] - The character type identifier.
+ */
 function CharacterSprite({ x, y, x2, y2, progress = 0, state = 'idle', size = 50, character = 'Player' }) {
   // Interpolated position
   const currentX = x2 !== undefined ? x + (x2 - x) * progress : x;

@@ -1,170 +1,81 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { TransformWrapper, TransformComponent, useControls } from 'react-zoom-pan-pinch';
 import { PHASES } from '../../hooks/useGame';
 import RoutePath from './RoutePath';
 import StationMarker from './StationMarker';
 import CharacterSprite from './CharacterSprite';
 import LineBadge from './LineBadge';
-import { computeSubwayLayout } from '../../utils/layoutAlgorithm';
 import { LINE_PALETTE, getLineColor } from '../../utils/linePalette';
+import GameControls from './GameControls';
+import { useGameContext } from '../../contexts/GameContext';
+import { useWalkAnimation } from '../../hooks/useWalkAnimation';
+import { useMapLayout } from '../../hooks/useMapLayout';
+import { useGameStateDerived } from '../../hooks/useGameStateDerived';
 import './NetworkMap.css';
 
 function ZoomControls() {
   const { zoomIn, zoomOut, resetTransform } = useControls();
   return (
     <div className="zoom-controls">
-      <button className="zoom-btn" onClick={() => zoomIn()} title="Zoom in">＋</button>
+      <button className="zoom-btn" onClick={() => zoomIn()} title="Zoom in">+</button>
       <button className="zoom-btn" onClick={() => resetTransform()} title="Reset">⌂</button>
-      <button className="zoom-btn" onClick={() => zoomOut()} title="Zoom out">－</button>
+      <button className="zoom-btn" onClick={() => zoomOut()} title="Zoom out">-</button>
     </div>
   );
 }
 
-function NetworkMap({
-  phase,
-  currentGame,
-  gameResult,
-  selectedRoute,
-  timeLeft,
-  selectedCharacter,
-  stations = [],
-  lines = [],
-  startGame,
-  submitRoute,
-  resetToSetup,
-  setSelectedRoute,
-  setExecStep,
-  finishGame
-}) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [execStep, setLocalExecStep] = useState(0);
-  const [walkProgress, setWalkProgress] = useState(0);
 
+
+/**
+ * The core mapping component that visualizes the subway network, handles interactive route planning,
+ * and animates the character sprite during execution.
+ * 
+ * @param {object} props
+ * @param {Array<string>} props.selectedRoute - The current planned route of station IDs.
+ * @param {function} props.setSelectedRoute - Callback to update the planned route.
+ * @param {number} props.execStep - The current step index during execution animation.
+ * @param {function} props.setExecStep - Callback to update the execution step index.
+ * @param {string} [props.selectedCharacter='Player'] - The identifier for the chosen avatar sprite.
+ * @param {Array<object>} [props.stations=[]] - The full list of station definitions.
+ * @param {Array<object>} [props.lines=[]] - The full list of line definitions.
+ */
+function NetworkMap({
+  selectedRoute,
+  setSelectedRoute,
+  execStep,
+  setExecStep,
+  selectedCharacter = "Player",
+  stations = [],
+  lines = []
+}) {
+
+  const { phase, gameResult, currentGame, gameActions } = useGameContext();
+  const { finishGame } = gameActions;
+
+  const [isExpanded, setIsExpanded] = useState(false);
   const showLines = phase === PHASES.SETUP;
 
-  // Drive visual segment walk animation locally using requestAnimationFrame loop
-  useEffect(() => {
-    if (phase !== 'EXECUTION' || !gameResult) {
-      return;
-    }
-
-    if (!gameResult.steps || gameResult.steps.length === 0) {
-      finishGame?.();
-      return;
-    }
-
-    let currentStep = 0;
-    let startTimestamp = null;
-    const walkDuration = 1000; // 1 second walk duration
-    const pauseDuration = 200; // 0.2 second pause at stations
-    const segmentDuration = walkDuration + pauseDuration;
-    let animId;
-
-    const animate = (timestamp) => {
-      if (!startTimestamp) startTimestamp = timestamp;
-      const elapsed = timestamp - startTimestamp;
-
-      // Determine which step index we are on
-      const stepIndex = Math.floor(elapsed / segmentDuration);
-
-      if (stepIndex < gameResult.steps.length) {
-        if (stepIndex !== currentStep) {
-          currentStep = stepIndex;
-          setLocalExecStep(stepIndex);
-          setExecStep?.(stepIndex);
-        }
-
-        const stepElapsed = elapsed % segmentDuration;
-        const progress = Math.min(stepElapsed / walkDuration, 1);
-        setWalkProgress(progress);
-
-        animId = requestAnimationFrame(animate);
-      } else {
-        // We have completed all steps!
-        setLocalExecStep(gameResult.steps.length);
-        setExecStep?.(gameResult.steps.length);
-        setWalkProgress(0);
-
-        // Pause briefly at the final station, then finish the execution phase
-        const delay = setTimeout(() => {
-          finishGame?.();
-        }, 1000);
-
-        return () => clearTimeout(delay);
-      }
-    };
-
-    animId = requestAnimationFrame(animate);
-
-    return () => {
-      cancelAnimationFrame(animId);
-    };
-  }, [phase, gameResult, setExecStep, finishGame]);
-
-  const getTitle = () => {
-    switch (phase) {
-      case PHASES.SETUP: return 'Game Setup';
-      case PHASES.PLANNING: return 'Route Planning';
-      case PHASES.EXECUTION: return 'Journey Execution';
-      case PHASES.RESULT: return 'Final Results';
-      default: return 'System Map';
+  const submitRoute = (route) => {
+    if (phase === PHASES.PLANNING) {
+      gameActions.submitRoute(route);
     }
   };
 
-  const getSubTitle = () => {
-    if (phase === PHASES.PLANNING && currentGame) {
-      return `Target: ${currentGame.start.name} to ${currentGame.destination.name}`;
-    }
-    return '';
-  };
+  const walkProgress = useWalkAnimation(phase, gameResult, finishGame, setExecStep);
 
-  // Derive active segment coordinates
-  let currentSegment = null;
-  if (phase === 'EXECUTION' && gameResult?.steps[execStep]) {
-    if (!gameResult.steps[execStep].isFailed) {
-      currentSegment = { s1_id: gameResult.steps[execStep].from, s2_id: gameResult.steps[execStep].to };
-    }
-  }
+  const {
+    dynamicStationCoords,
+    viewBox,
+    stationLineCounts
+  } = useMapLayout(stations, lines);
 
-  // Derive character state
-  let characterState = 'idle';
-  if (phase === 'EXECUTION') {
-    const currentStep = gameResult?.steps[execStep];
-    if (currentStep?.isFailed) {
-      characterState = 'lose';
-    } else if (execStep >= gameResult?.steps?.length) {
-      const lastStep = gameResult?.steps[gameResult.steps.length - 1];
-      characterState = lastStep?.isFailed ? 'lose' : 'walk';
-    } else {
-      characterState = 'walk';
-    }
-  } else if (phase === 'RESULT') {
-    const hasFailedStep = gameResult?.steps?.some(s => s.isFailed);
-    if (hasFailedStep || gameResult?.isInvalid) {
-      characterState = 'lose';
-    } else {
-      characterState = gameResult?.score > 0 ? 'win' : 'lose';
-    }
-  }
-
-  // Derive current station ID dynamically from source of truth
-  let currentStationId = null;
-  if (phase === PHASES.PLANNING) {
-    currentStationId = selectedRoute[selectedRoute.length - 1] || currentGame?.start.id;
-  } else if ((phase === PHASES.EXECUTION || phase === PHASES.RESULT) && gameResult?.steps?.length) {
-    const isFinished = phase === PHASES.RESULT || execStep >= gameResult.steps.length;
-    const lastStep = gameResult.steps[gameResult.steps.length - 1];
-    currentStationId = isFinished
-      ? (lastStep.isFailed ? lastStep.from : lastStep.to)
-      : gameResult.steps[execStep]?.from;
-  } else if (currentGame) {
-    currentStationId = currentGame.start.id;
-  }
-
-  // Derive highlight stations
-  const highlightStations = (phase === PHASES.PLANNING || phase === PHASES.EXECUTION || phase === PHASES.RESULT) && currentGame
-    ? [currentGame.start.id, currentGame.destination.id]
-    : [];
+  const {
+    currentSegment,
+    characterState,
+    currentStationId,
+    highlightStations,
+    showFailOverlay
+  } = useGameStateDerived(phase, gameResult, currentGame, execStep, selectedRoute);
 
   // Handle station clicking internally
   const handleStationClick = (targetId) => {
@@ -186,7 +97,7 @@ function NetworkMap({
     let linkExists = false;
     for (let i = 0; i < selectedRoute.length - 1; i++) {
       const s1 = selectedRoute[i];
-      const s2 = selectedRoute[i+1];
+      const s2 = selectedRoute[i + 1];
       if ((s1 === currentId && s2 === targetId) || (s1 === targetId && s2 === currentId)) {
         linkExists = true;
         break;
@@ -197,33 +108,7 @@ function NetworkMap({
     setSelectedRoute([...selectedRoute, targetId]);
   };
 
-  const baseWidth = 1000;
-  const baseHeight = 1000;
-
-  // Compute topology-aware station coordinates
-  const dynamicStationCoords = computeSubwayLayout(stations, lines, baseWidth, baseHeight);
-
-  // ViewBox: fit the computed bounding box with a margin
-  const margin = 80;
-  const allCoords = Object.values(dynamicStationCoords);
-  const minX = allCoords.length ? Math.min(...allCoords.map(c => c.x)) : 0;
-  const maxX = allCoords.length ? Math.max(...allCoords.map(c => c.x)) : baseWidth;
-  const minY = allCoords.length ? Math.min(...allCoords.map(c => c.y)) : 0;
-  const maxY = allCoords.length ? Math.max(...allCoords.map(c => c.y)) : baseHeight;
-  const vbX = minX - margin;
-  const vbY = minY - margin;
-  const vbWidth = (maxX - minX) + margin * 2;
-  const vbHeight = (maxY - minY) + margin * 2;
-
-  // Calculate interchanges
-  const stationLineCounts = {};
-  lines.forEach(line => {
-    line.stations.forEach(s => {
-      stationLineCounts[s.id] = (stationLineCounts[s.id] || 0) + 1;
-    });
-  });
-
-  const currentStation = stations.find(s => s.id === currentStationId);
+  const currentStation = phase === PHASES.SETUP ? null : stations.find(s => s.id === currentStationId);
 
   // Animation coordinates logic
   let startCoords = currentStation ? (dynamicStationCoords[currentStation.id] || null) : null;
@@ -238,14 +123,6 @@ function NetworkMap({
     }
   }
 
-  const showFailOverlay = gameResult?.isInvalid && (
-    phase === PHASES.RESULT ||
-    (phase === PHASES.EXECUTION && (
-      gameResult.steps[execStep]?.isFailed ||
-      (execStep >= gameResult.steps.length && gameResult.steps[gameResult.steps.length - 1]?.isFailed)
-    ))
-  );
-
   return (
     <div className={`network-map-outer ${isExpanded ? 'expanded' : 'standard'}`}>
       <div className={`map-background ${isExpanded ? 'dimmed' : ''}`}
@@ -256,36 +133,12 @@ function NetworkMap({
       </div>
 
       <div className={`industrial-frame ${isExpanded ? 'expanded' : 'standard'}`}>
-        <header className="map-header">
-          <div className="header-left">
-            <div className="header-titles">
-              <h3>{getTitle()}</h3>
-              <p className="header-subtitle">{getSubTitle()}</p>
-            </div>
-          </div>
-          <div className="header-right">
-            {phase === PHASES.SETUP && (
-              <button onClick={startGame} className="expand-button action-btn-blue">START RACE</button>
-            )}
 
-            {phase === PHASES.PLANNING && (
-              <>
-                <div className={`timer-compact ${timeLeft < 20 ? 'timer-urgent' : 'timer-normal'}`}>
-                  {String(timeLeft).padStart(2, '0')}s
-                </div>
-                <button onClick={submitRoute} className="expand-button action-btn-green">FINISH PLAN</button>
-              </>
-            )}
-
-            {phase === PHASES.RESULT && (
-              <button onClick={resetToSetup} className="expand-button action-btn-blue">NEW GAME</button>
-            )}
-
-            <button onClick={() => setIsExpanded(!isExpanded)} className="expand-button">
-              {isExpanded ? '⏹ Minimize' : '⛶ Maximize'}
-            </button>
-          </div>
-        </header>
+        <GameControls
+          isExpanded={isExpanded}
+          setIsExpanded={setIsExpanded}
+          onSubmit={() => submitRoute(selectedRoute)}
+        />
 
         <div className="canvas-container">
           {showFailOverlay && gameResult?.failReason && (
@@ -310,7 +163,7 @@ function NetworkMap({
             >
               <div className="canvas-content-wrapper">
                 <svg
-                  viewBox={`${vbX} ${vbY} ${vbWidth} ${vbHeight}`}
+                  viewBox={viewBox}
                   className="map-canvas-svg"
                   preserveAspectRatio="xMidYMid meet"
                 >
@@ -321,7 +174,8 @@ function NetworkMap({
                   </defs>
 
                   {/* Background grid */}
-                  <rect x={vbX} y={vbY} width={vbWidth} height={vbHeight} fill="url(#smallGrid)" />
+                  {/* <rect x={vbX} y={vbY} width={vbWidth} height={vbHeight} fill="url(#smallGrid)" /> */}
+                  <rect x="-1000" y="-1000" width="3000" height="3000" fill="url(#smallGrid)" />
 
                   {/* Planned Route (grey dashed preview during planning) */}
                   {phase === PHASES.PLANNING && (

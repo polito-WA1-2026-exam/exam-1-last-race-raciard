@@ -24,8 +24,8 @@ function RouteBuilder({ selectedRoute = [], stations = [], onUndo }) {
                   </span>
                 </div>
                 {i === selectedRoute.length - 2 && (
-                  <button 
-                    onClick={onUndo} 
+                  <button
+                    onClick={onUndo}
                     className="remove-segment-button"
                   >
                     REMOVE

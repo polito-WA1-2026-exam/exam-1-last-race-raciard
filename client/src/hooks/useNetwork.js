@@ -1,6 +1,18 @@
 import { useState, useEffect } from 'react';
 import { getNetwork } from '../services/api';
 
+/**
+ * Custom hook to fetch and manage the static subway network topology.
+ * It retrieves the list of stations and lines, and computes individual segments.
+ * 
+ * @returns {object} The network state:
+ *  - stations: Array of all stations in the network.
+ *  - lines: Array of all lines in the network.
+ *  - segments: Array of all contiguous line segments connecting stations.
+ *  - loading: Boolean indicating if the network is currently being fetched.
+ *  - error: Error object if the fetch failed.
+ *  - refresh: Function to manually refetch the network data.
+ */
 export function useNetwork() {
   const [stations, setStations] = useState([]);
   const [lines, setLines] = useState([]);

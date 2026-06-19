@@ -1,5 +1,17 @@
 
 
+/**
+ * Renders an SVG representation of a subway station on the network map.
+ * 
+ * @param {object} props
+ * @param {object} props.station - The station data object (id, name).
+ * @param {object} props.coords - The {x, y} SVG coordinates for the station.
+ * @param {boolean} props.isTarget - Whether this station is the destination/target.
+ * @param {boolean} props.isCurrent - Whether the character is currently at this station.
+ * @param {boolean} props.canClick - Whether the station can be clicked (active in PLANNING phase).
+ * @param {function} props.onClick - Callback fired when the station is clicked.
+ * @param {boolean} props.isInterchange - Whether the station serves multiple lines.
+ */
 function StationMarker({ station, coords, isTarget, isCurrent, canClick, onClick, isInterchange }) {
   return (
     <g

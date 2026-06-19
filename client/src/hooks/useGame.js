@@ -4,6 +4,16 @@ import { PHASES } from '../utils/gamePhases';
 
 export { PHASES };
 
+/**
+ * Custom hook to manage the top-level game state and phase transitions.
+ * It provides actions to start a new game, submit routes, and handle results.
+ * 
+ * @returns {object} The game state and actions:
+ *  - phase: The current game phase (SETUP, PLANNING, EXECUTION, RESULT).
+ *  - currentGame: The active game data (e.g., start and destination).
+ *  - gameResult: The result of the submitted route.
+ *  - gameActions: Object containing methods { startGame, submitRoute, resetToSetup, finishGame }.
+ */
 export function useGame() {
   const [phase, setPhase] = useState(PHASES.SETUP);
   const [currentGame, setCurrentGame] = useState(null);
@@ -47,10 +57,12 @@ export function useGame() {
     phase,
     currentGame,
     gameResult,
-    startGame,
-    submitRoute,
-    resetToSetup,
-    finishGame,
+    gameActions: {
+      startGame,
+      submitRoute,
+      resetToSetup,
+      finishGame,
+    }
   };
 }
 

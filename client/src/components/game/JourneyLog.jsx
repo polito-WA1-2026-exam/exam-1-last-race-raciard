@@ -9,16 +9,16 @@ function JourneyLog({ gameResult, phase, execStep, stations = [], lines = [] }) 
       <div className="score-display">
         <p className="score-label">Current Score</p>
         <p className="score-value">
-          {phase === PHASES.EXECUTION 
+          {phase === PHASES.EXECUTION
             ? (execStep === 0 ? 20 : gameResult.steps[execStep - 1]?.coins || 0)
             : gameResult.score
           }
         </p>
       </div>
-      
+
       <div className="log-content">
         <h4 className="log-header">Journey Log</h4>
-        
+
         {gameResult.steps.length === 0 ? (
           <div className="failure-card">
             <p className="failure-title">MISSION FAILED</p>
@@ -44,7 +44,7 @@ function JourneyLog({ gameResult, phase, execStep, stations = [], lines = [] }) 
                 </p>
               </div>
             ))}
-            
+
             {phase === PHASES.RESULT && gameResult.steps.length > 0 && !gameResult.isInvalid && (
               <div className="mission-clear animate-pulse">
                 Mission Clear! 🎉
