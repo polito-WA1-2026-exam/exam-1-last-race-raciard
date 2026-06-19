@@ -1,0 +1,6 @@
+export const PHASES = {
+  SETUP: 'SETUP',
+  PLANNING: 'PLANNING',
+  EXECUTION: 'EXECUTION',
+  RESULT: 'RESULT',
+};

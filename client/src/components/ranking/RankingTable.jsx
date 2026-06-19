@@ -1,4 +1,3 @@
-import React from 'react';
 import RankingRow from './RankingRow';
 import './RankingTable.css';
 

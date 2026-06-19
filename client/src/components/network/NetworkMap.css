@@ -572,3 +572,51 @@
   background-image: linear-gradient(to top right, rgba(255, 255, 255, 0), transparent, rgba(255, 255, 255, 0.05));
   opacity: 0.3;
 }
+
+/* Active styles merged from MapCanvas.css */
+.map-canvas-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 25px 25px rgba(0, 0, 0, 0.15)); /* drop-shadow-2xl */
+}
+
+.station-marker-group {
+  transition: all 0.3s;
+}
+
+.station-marker-group.clickable {
+  cursor: pointer;
+}
+
+.station-label-text {
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: -0.05em; /* tracking-tighter */
+  text-transform: uppercase;
+  user-select: none;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.station-label-target {
+  fill: var(--yellow-400);
+}
+
+.station-label-current {
+  fill: var(--blue-400);
+}
+
+.station-label-standard {
+  fill: var(--slate-300);
+}
+
+.planning-trail {
+  transition: all 0.3s;
+}
+
+.journey-trail {
+  transition: all 0.3s;
+}
+
+.line-path-group {
+  transition: all 0.7s;
+}

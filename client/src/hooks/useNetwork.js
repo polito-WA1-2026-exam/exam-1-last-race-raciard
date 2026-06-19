@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from '../services/api';
+import { getNetwork } from '../services/api';
 
 export function useNetwork() {
   const [stations, setStations] = useState([]);
@@ -11,7 +11,7 @@ export function useNetwork() {
   const fetchNetwork = async () => {
     try {
       setLoading(true);
-      const { stations: s, lines: l } = await api.get('/network');
+      const { stations: s, lines: l } = await getNetwork();
       setStations(s);
       setLines(l);
       // Derive segments from consecutive stations on each line
@@ -35,7 +35,9 @@ export function useNetwork() {
   };
 
   useEffect(() => {
-    fetchNetwork();
+    Promise.resolve().then(() => {
+      fetchNetwork();
+    });
   }, []);
 
   return { stations, lines, segments, loading, error, refresh: fetchNetwork };

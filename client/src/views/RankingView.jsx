@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from '../services/api';
+import { getRanking } from '../services/api';
 import RankingTable from '../components/ranking/RankingTable';
 import './RankingView.css';
 
@@ -9,7 +9,7 @@ function RankingView() {
 
   const fetchRanking = async () => {
     try {
-      const data = await api.get('/ranking');
+      const data = await getRanking();
       setRanking(data);
     } catch (err) {
       console.error('Failed to fetch ranking', err);
@@ -19,7 +19,9 @@ function RankingView() {
   };
 
   useEffect(() => {
-    fetchRanking();
+    Promise.resolve().then(() => {
+      fetchRanking();
+    });
   }, []);
 
   if (loading) {

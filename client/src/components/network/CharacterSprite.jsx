@@ -1,5 +1,3 @@
-import React from 'react';
-
 // Character Assets Mapping
 import player_idle from '../../assets/kenney_platformer-characters/PNG/Player/Poses/player_idle.png';
 import player_walk1 from '../../assets/kenney_platformer-characters/PNG/Player/Poses/player_walk1.png';
@@ -44,7 +42,7 @@ const CHARACTERS = {
   Zeb: { idle: zeb_idle, walk1: zeb_walk1, walk2: zeb_walk2, win: zeb_idle, lose: zeb_idle },
 };
 
-function CharacterSprite({ x, y, x2, y2, progress = 0, state = 'idle', size = 50, mapHeight = 800, character = 'Player' }) {
+function CharacterSprite({ x, y, x2, y2, progress = 0, state = 'idle', size = 50, character = 'Player' }) {
   // Interpolated position
   const currentX = x2 !== undefined ? x + (x2 - x) * progress : x;
   const currentY = y2 !== undefined ? y + (y2 - y) * progress : y;
@@ -70,7 +68,6 @@ function CharacterSprite({ x, y, x2, y2, progress = 0, state = 'idle', size = 50
 
   const isLost = state === 'lose';
   const isWinner = state === 'win';
-  const animY = isLost ? mapHeight + size : (currentY + bounce);
 
   const getSprite = () => {
     const sprites = CHARACTERS[character] || CHARACTERS.Player;

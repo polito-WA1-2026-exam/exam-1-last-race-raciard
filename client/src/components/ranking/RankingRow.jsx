@@ -1,5 +1,3 @@
-import React from 'react';
-
 function RankingRow({ rank, username, score, isTopThree }) {
   const getRankBadge = () => {
     if (rank === 1) return '🥇';

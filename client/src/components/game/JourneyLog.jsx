@@ -1,10 +1,9 @@
-import React from 'react';
-import { useGameContext } from '../../contexts/GameContext';
 import LineBadge from '../network/LineBadge';
+import { PHASES } from '../../hooks/useGame';
 import './JourneyLog.css';
 
-function JourneyLog() {
-  const { gameResult, execStep, stations, lines, phase, PHASES } = useGameContext();
+function JourneyLog({ gameResult, phase, execStep, stations = [], lines = [] }) {
+
   return (
     <div className="journey-log-container">
       <div className="score-display">
@@ -36,7 +35,7 @@ function JourneyLog() {
                     <LineBadge line={lines.find(l => l.id === step.lineId) ?? { id: step.lineId, name: '?' }} lines={lines} />
                   )}
                   <p className="step-route">
-                    {stations.find(s => s.id === step.segment.s1_id)?.name} → {stations.find(s => s.id === step.segment.s2_id)?.name}
+                    {stations.find(s => s.id === step.from)?.name} → {stations.find(s => s.id === step.to)?.name}
                   </p>
                 </div>
                 <p className="step-event">"{step.event.description}"</p>

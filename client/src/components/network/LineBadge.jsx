@@ -1,4 +1,3 @@
-import React from 'react';
 import { getLineColor } from '../../utils/linePalette';
 import './LineBadge.css';
 

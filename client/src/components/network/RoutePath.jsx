@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * Unified path-drawing component for all three route types.
  *

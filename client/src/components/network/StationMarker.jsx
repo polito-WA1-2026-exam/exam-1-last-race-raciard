@@ -1,5 +1,4 @@
-import React from 'react';
-import './MapCanvas.css';
+
 
 function StationMarker({ station, coords, isTarget, isCurrent, canClick, onClick, isInterchange }) {
   return (
