@@ -6,7 +6,7 @@ const isLoggedIn = (req, res, next) => {
     return res.status(401).json({ error: 'Not authenticated' });
 };
 
-export default function(gameService, gameDao, userDao) {
+export default function (gameService, gameDao, userDao) {
     // GET /api/events
     router.get('/events', async (req, res) => {
         try {
@@ -18,7 +18,7 @@ export default function(gameService, gameDao, userDao) {
     });
 
     // GET /api/ranking
-    router.get('/ranking', async (req, res) => {
+    router.get('/ranking', isLoggedIn, async (req, res) => {
         try {
             const ranking = await userDao.getRanking();
             res.json(ranking);
@@ -62,7 +62,7 @@ export default function(gameService, gameDao, userDao) {
                 throw err;
             }
 
-            const result = await gameService.executeRoute(route, failReason);
+            const result = await gameService.executeRoute(route, failReason, currentGame);
 
             // Save result
             await gameDao.addGame(req.user.id, currentGame.startId, currentGame.destinationId, result.score);
