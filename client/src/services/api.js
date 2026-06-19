@@ -25,8 +25,17 @@ async function request(endpoint, method = 'GET', body = null) {
   return response.json();
 }
 
-export default {
-  get: (endpoint) => request(endpoint),
-  post: (endpoint, body) => request(endpoint, 'POST', body),
-  delete: (endpoint) => request(endpoint, 'DELETE'),
-};
+// Auth
+export const getSession = () => request('/sessions/current');
+export const login = (username, password) => request('/sessions', 'POST', { username, password });
+export const logout = () => request('/sessions/current', 'DELETE');
+
+// Network
+export const getNetwork = () => request('/network');
+
+// Game
+export const createGame = () => request('/games', 'POST');
+export const submitResult = (route) => request('/games/result', 'POST', { route });
+
+// Ranking
+export const getRanking = () => request('/ranking');
