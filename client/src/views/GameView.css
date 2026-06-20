@@ -268,3 +268,40 @@
   text-align: center;
   font-weight: 700;
 }
+
+.landing-layout-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  gap: 2rem;
+  overflow-y: auto;
+}
+
+@media (min-width: 1024px) {
+  .landing-layout-container {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 3rem 2rem;
+    gap: 3rem;
+  }
+  
+  .landing-layout-container > .instructions-container {
+    flex: 1.2;
+    margin: 0;
+    max-width: none;
+  }
+
+  .landing-layout-container > .login-card {
+    flex: 0.8;
+    margin: 0;
+    max-width: 24rem;
+    position: sticky;
+    top: 2rem;
+  }
+}

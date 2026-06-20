@@ -221,3 +221,28 @@
   color: var(--red-400);
   text-transform: uppercase;
 }
+
+.agent-panel-offline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgba(30, 41, 59, 0.3);
+  border: 1px solid var(--slate-800);
+  border-radius: 2px;
+  padding: 0.2rem 0.6rem;
+}
+
+.agent-status-dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--red-400);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--red-400);
+}
+
+.agent-status-text {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--slate-500);
+}

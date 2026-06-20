@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './contexts/AuthContext';
 import GameView from './views/GameView';
 import RankingView from './views/RankingView';
+import LoginView from './views/LoginView';
 import Navbar from './components/layout/Navbar';
 import './App.css';
 
@@ -15,6 +16,7 @@ function App() {
             <Routes>
               <Route path="/" element={<GameView />} />
               <Route path="/ranking" element={<RankingView />} />
+              <Route path="/login" element={<LoginView />} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </main>

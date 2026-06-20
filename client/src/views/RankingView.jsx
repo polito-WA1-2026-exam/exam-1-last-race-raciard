@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import { getRanking } from '../services/api';
 import RankingTable from '../components/ranking/RankingTable';
 import './RankingView.css';
 
 function RankingView() {
+  const { user } = useAuth();
   const [ranking, setRanking] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -19,10 +22,16 @@ function RankingView() {
   };
 
   useEffect(() => {
+    if (!user) return;
     Promise.resolve().then(() => {
       fetchRanking();
     });
-  }, []);
+  }, [user]);
+
+  // Redirect to home if not logged in
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
 
   if (loading) {
     return (

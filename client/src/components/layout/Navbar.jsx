@@ -1,25 +1,9 @@
-import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import './Navbar.css';
 
 function Navbar() {
-  const { user, login, logout } = useAuth();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      await login(username, password);
-      setUsername('');
-      setPassword('');
-      setError('');
-    } catch {
-      setError('ACCESS DENIED');
-    }
-  };
+  const { user, logout } = useAuth();
 
   return (
     <nav className="navbar">
@@ -30,12 +14,14 @@ function Navbar() {
         </Link>
         <span className="navbar-separator">|</span>
         <div className="navbar-tabs">
-          <NavLink to="/" end className={({ isActive }) => `navbar-tab ${isActive ? 'navbar-tab--active' : ''}`}>
+          {user && <NavLink to="/" end className={({ isActive }) => `navbar-tab ${isActive ? 'navbar-tab--active' : ''}`}>
             <span className="tab-dot"></span>GAME
-          </NavLink>
-          <NavLink to="/ranking" className={({ isActive }) => `navbar-tab ${isActive ? 'navbar-tab--active' : ''}`}>
-            <span className="tab-dot"></span>RANKING
-          </NavLink>
+          </NavLink>}
+          {user && (
+            <NavLink to="/ranking" className={({ isActive }) => `navbar-tab ${isActive ? 'navbar-tab--active' : ''}`}>
+              <span className="tab-dot"></span>RANKING
+            </NavLink>
+          )}
         </div>
       </div>
 
@@ -47,21 +33,10 @@ function Navbar() {
             <button onClick={logout} className="agent-logout">⏻</button>
           </div>
         ) : (
-          <form onSubmit={handleLogin} className="terminal-form">
-            {error && <span className="terminal-error">{error}</span>}
-            <span className="terminal-prompt">&gt;_</span>
-            <input
-              type="text" placeholder="ID" value={username}
-              onChange={e => { setUsername(e.target.value); setError(''); }}
-              className="terminal-input" required autoComplete="username"
-            />
-            <input
-              type="password" placeholder="KEY" value={password}
-              onChange={e => { setPassword(e.target.value); setError(''); }}
-              className="terminal-input" required autoComplete="current-password"
-            />
-            <button type="submit" className="terminal-submit">ACCESS</button>
-          </form>
+          <div className="agent-panel-offline">
+            <span className="agent-status-dot"></span>
+            <span className="agent-status-text">LOGGED OUT</span>
+          </div>
         )}
       </div>
     </nav>
