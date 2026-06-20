@@ -37,7 +37,7 @@ function GameControls({ isExpanded, setIsExpanded, onSubmit }) {
 
     const getSubTitle = () => {
         if (phase === PHASES.PLANNING && currentGame) {
-            return `Target: ${currentGame.start.name} to ${currentGame.destination.name}`;
+            return `Go from ${currentGame.start.name} to ${currentGame.destination.name}`;
         }
         return '';
     };

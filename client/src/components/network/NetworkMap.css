@@ -371,6 +371,41 @@
   color: #ffffff;
 }
 
+.success-overlay {
+  position: absolute;
+  bottom: 3.5rem; /* sit above zoom controls */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  background-color: rgba(22, 101, 52, 0.92);
+  border: 1px solid #22c55e;
+  border-radius: 3px;
+  padding: 0.6rem 1.2rem;
+  text-align: center;
+  pointer-events: none;
+  animation: fail-overlay-in 0.4s ease-out;
+}
+
+.success-overlay-label {
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #bbf7d0;
+}
+
+.success-overlay-score {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
 .zoom-controls {
   position: absolute;
   bottom: 1rem;

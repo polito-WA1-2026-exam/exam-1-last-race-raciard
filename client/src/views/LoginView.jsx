@@ -21,8 +21,8 @@ function LoginView() {
     setError('');
     try {
       await login(username, password);
-    } catch (err) {
-      setError('ACCESS RESTRICTED: INVALID CREDENTIALS');
+    } catch {
+      setError('INVALID CREDENTIALS');
     } finally {
       setLoading(false);
     }
