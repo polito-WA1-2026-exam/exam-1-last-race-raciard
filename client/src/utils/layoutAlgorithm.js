@@ -62,7 +62,7 @@ export function computeSubwayLayout(stations, lines, canvasWidth, canvasHeight) 
   // forces K-K into a random local minimum.  BFS-ordered circles and grid
   // seeds put graph-close nodes near each other, yielding much better optima.
   const degrees = Array.from({ length: n }, (_, i) => adj[i].size);
-  const byDeg   = [...Array(n).keys()].sort((a, b) => degrees[b] - degrees[a]);
+  const byDeg = [...Array(n).keys()].sort((a, b) => degrees[b] - degrees[a]);
 
   const seeds = [
     plainCircle(n),                                 // standard circle
@@ -177,7 +177,7 @@ function bfsGrid(n, adj, root) {
     layer.forEach((node, ni) => {
       pos[node] = {
         x: nInLayer > 1 ? (ni / (nInLayer - 1)) * 2 - 1 : 0,
-        y: nL      > 1 ? (li / (nL      - 1)) * 2 - 1 : 0,
+        y: nL > 1 ? (li / (nL - 1)) * 2 - 1 : 0,
       };
     });
   });
@@ -202,9 +202,9 @@ function bfsOrder(n, adj, root) {
 
 /** Kamada-Kawai stress minimisation. Mutates `pos` in-place and returns it. */
 function kamadaKawai(pos, n, K, L) {
-  const KK_ITERS   = 400;
+  const KK_ITERS = 400;
   const INNER_ITERS = 12;
-  const EPSILON    = 1e-4;
+  const EPSILON = 1e-4;
 
   for (let iter = 0; iter < KK_ITERS; iter++) {
     let maxDelta = -1, maxM = 0;
@@ -231,14 +231,14 @@ function kamadaKawai(pos, n, K, L) {
         const dx = pos[m].x - pos[i].x;
         const dy = pos[m].y - pos[i].y;
         const dist2 = dx * dx + dy * dy;
-        const dist  = Math.sqrt(dist2) || 1e-9;
+        const dist = Math.sqrt(dist2) || 1e-9;
         const dist3 = dist2 * dist;
         const k = K[m][i], l = L[m][i];
-        dEx  += k * (dx - l * dx / dist);
-        dEy  += k * (dy - l * dy / dist);
-        d2Ex += k * (1  - l * dy * dy / dist3);
-        d2Ey += k * (1  - l * dx * dx / dist3);
-        dExy += k * (l  * dx * dy / dist3);
+        dEx += k * (dx - l * dx / dist);
+        dEy += k * (dy - l * dy / dist);
+        d2Ex += k * (1 - l * dy * dy / dist3);
+        d2Ey += k * (1 - l * dx * dx / dist3);
+        dExy += k * (l * dx * dy / dist3);
       }
       const det = d2Ex * d2Ey - dExy * dExy;
       if (Math.abs(det) < 1e-12) break;
@@ -291,17 +291,17 @@ function straightenLines(pos, lines, idxOf, lineCounts, passes, alpha) {
       }
 
       // Principal eigenvector of the 2×2 covariance matrix
-      const trace  = cxx + cyy;
-      const disc   = Math.sqrt((cxx - cyy) ** 2 + 4 * cxy * cxy);
-      const lam1   = (trace + disc) / 2;
+      const trace = cxx + cyy;
+      const disc = Math.sqrt((cxx - cyy) ** 2 + 4 * cxy * cxy);
+      const lam1 = (trace + disc) / 2;
       let ex = lam1 - cyy, ey = cxy;
-      const eLen   = Math.sqrt(ex * ex + ey * ey) || 1;
+      const eLen = Math.sqrt(ex * ex + ey * ey) || 1;
       ex /= eLen; ey /= eLen;
 
       for (const i of members) {
-        const weight  = alpha / lineCounts[i]; // softer for interchange nodes
-        const dx      = pos[i].x - cx, dy = pos[i].y - cy;
-        const proj    = dx * ex + dy * ey;
+        const weight = alpha / lineCounts[i]; // softer for interchange nodes
+        const dx = pos[i].x - cx, dy = pos[i].y - cy;
+        const proj = dx * ex + dy * ey;
         const onAxisX = cx + proj * ex;
         const onAxisY = cy + proj * ey;
         pos[i].x += weight * (onAxisX - pos[i].x);
@@ -344,11 +344,11 @@ function fitToCanvas(pos, ids, canvasWidth, canvasHeight, marginFrac) {
     if (p.y < minY) minY = p.y; if (p.y > maxY) maxY = p.y;
   }
   const rangeX = maxX - minX || 1, rangeY = maxY - minY || 1;
-  const availW = canvasWidth  * (1 - 2 * marginFrac);
+  const availW = canvasWidth * (1 - 2 * marginFrac);
   const availH = canvasHeight * (1 - 2 * marginFrac);
-  const scale  = Math.min(availW / rangeX, availH / rangeY);
-  const offX   = canvasWidth  / 2 - ((minX + maxX) / 2) * scale;
-  const offY   = canvasHeight / 2 - ((minY + maxY) / 2) * scale;
+  const scale = Math.min(availW / rangeX, availH / rangeY);
+  const offX = canvasWidth / 2 - ((minX + maxX) / 2) * scale;
+  const offY = canvasHeight / 2 - ((minY + maxY) / 2) * scale;
 
   const result = {};
   ids.forEach((id, i) => {

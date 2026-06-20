@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { GameProvider, useGameContext, useNetworkContext, PHASES } from '../contexts/GameContext';
+import { GameProvider, useGameContext, PHASES } from '../contexts/GameContext';
+import { useNetwork } from '../hooks/useNetwork';
 import Instructions from '../components/layout/Instructions';
 import NetworkMap from '../components/network/NetworkMap';
 import RouteBuilder from '../components/game/RouteBuilder';
@@ -15,7 +16,7 @@ function GameLayout() {
     gameResult,
   } = useGameContext();
 
-  const { stations, lines, loading: networkLoading } = useNetworkContext();
+  const { stations, lines, loading: networkLoading } = useNetwork();
 
   const [selectedRoute, setSelectedRoute] = useState([]);
   const [selectedCharacter, setSelectedCharacter] = useState('Player');
