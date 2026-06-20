@@ -23,7 +23,7 @@ function StationMarker({ station, coords, isTarget, isCurrent, canClick, onClick
       {isTarget && <circle cx={coords.x} cy={coords.y} r="25" fill="rgba(234, 179, 8, 0.2)" className="animate-pulse" />}
 
       {/* Main marker */}
-      {isInterchange ? (
+      {isInterchange && !canClick ? (
         <circle
           cx={coords.x}
           cy={coords.y}
