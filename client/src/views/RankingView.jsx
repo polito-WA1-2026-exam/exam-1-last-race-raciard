@@ -44,7 +44,7 @@ function RankingView() {
   return (
     <div className="ranking-view">
       <div className="ranking-header">
-        <h1 className="ranking-title">Global Ranking</h1>
+        <h1 className="view-title ranking-title">Global Ranking</h1>
         <p className="ranking-subtitle">Top performers in the underground network.</p>
       </div>
       

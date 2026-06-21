@@ -13,11 +13,6 @@
 }
 
 .ranking-title {
-  font-size: 1.875rem;
-  font-weight: 900;
-  color: var(--slate-200);
-  text-transform: uppercase;
-  letter-spacing: -0.05em; /* tracking-tighter */
   margin-bottom: 0.5rem;
 }
 

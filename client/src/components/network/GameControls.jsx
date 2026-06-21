@@ -39,6 +39,9 @@ function GameControls({ isExpanded, setIsExpanded, onSubmit }) {
         if (phase === PHASES.PLANNING && currentGame) {
             return `Go from ${currentGame.start.name} to ${currentGame.destination.name}`;
         }
+        if (phase === PHASES.SETUP) {
+            return "Click on START RACE button to play!";
+        }
         return '';
     };
     return (

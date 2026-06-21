@@ -8,12 +8,7 @@
 }
 
 .instructions-title {
-  font-size: 1.875rem; /* text-3xl */
-  font-weight: 900;
   margin-bottom: 2.5rem; /* mb-10 */
-  color: var(--slate-100);
-  text-transform: uppercase;
-  letter-spacing: -0.05em; /* tracking-tighter */
   border-bottom: 4px solid var(--slate-700);
   padding-bottom: 1rem; /* pb-4 */
 }
@@ -136,21 +131,9 @@
 }
 
 .login-button {
-  background-color: var(--blue-600);
-  color: var(--slate-100);
-  border: none;
-  border-radius: 4px;
   padding: 0.75rem 2.5rem;
-  font-size: 0.875rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  cursor: pointer;
-  transition: all 0.2s ease;
 }
 
 .login-button:hover {
-  background-color: var(--blue-500);
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
   transform: translateY(-1px);
 }

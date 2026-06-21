@@ -3,7 +3,7 @@ import './RouteBuilder.css';
 function RouteBuilder({ selectedRoute = [], stations = [], onUndo }) {
   return (
     <div className="route-builder">
-      <h3 className="route-builder-header">Active Route</h3>
+      <h3 className="subway-header">Active Route</h3>
       <div className="route-list">
         {selectedRoute.length <= 1 ? (
           <p className="route-empty">

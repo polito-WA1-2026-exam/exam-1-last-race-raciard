@@ -77,7 +77,7 @@ function LoginView() {
             </div>
           </div>
 
-          <button type="submit" className="login-submit-btn" disabled={loading}>
+          <button type="submit" className="btn btn-primary login-submit-btn" disabled={loading}>
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>

@@ -17,7 +17,7 @@ function JourneyLog({ gameResult, phase, execStep, stations = [], lines = [] }) 
       </div>
 
       <div className="log-content">
-        <h4 className="log-header">Journey Log</h4>
+        <h4 className="subway-header">Journey Log</h4>
 
         {gameResult.steps.length === 0 ? (
           <div className="failure-card">

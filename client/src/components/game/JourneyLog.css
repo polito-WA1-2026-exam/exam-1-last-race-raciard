@@ -36,16 +36,6 @@
   gap: 1rem; /* space-y-4 */
 }
 
-.log-header {
-  font-weight: 900;
-  font-size: 0.75rem; /* text-xs */
-  color: var(--slate-500);
-  text-transform: uppercase;
-  letter-spacing: 0.1em; /* tracking-widest */
-  border-bottom: 1px solid var(--slate-800);
-  padding-bottom: 0.5rem; /* pb-2 */
-}
-
 .failure-card {
   background-color: rgba(127, 29, 29, 0.1); /* bg-red-900/10 */
   padding: 1rem; /* p-4 */

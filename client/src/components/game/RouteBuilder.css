@@ -4,16 +4,6 @@
   gap: 1rem; /* space-y-4 */
 }
 
-.route-builder-header {
-  font-weight: 700;
-  font-size: 0.875rem; /* text-sm */
-  color: var(--slate-500);
-  text-transform: uppercase;
-  letter-spacing: 0.1em; /* tracking-widest */
-  border-bottom: 1px solid var(--slate-800);
-  padding-bottom: 0.5rem; /* pb-2 */
-}
-
 .route-list {
   display: flex;
   flex-direction: column;

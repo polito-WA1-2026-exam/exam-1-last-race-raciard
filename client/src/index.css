@@ -106,3 +106,103 @@ body {
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* Reusable UI Components & Utility Classes */
+
+.view-title {
+  font-size: 1.875rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  color: var(--slate-200);
+}
+
+.subway-header {
+  font-weight: 900;
+  font-size: 0.875rem;
+  color: var(--slate-500);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  border-bottom: 2px solid var(--slate-800);
+  padding-bottom: 0.5rem;
+}
+
+/* Button system */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background-color: var(--blue-600);
+  color: var(--slate-100);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--blue-500);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+}
+
+.btn-primary:disabled {
+  background-color: var(--slate-800);
+  color: var(--slate-500);
+  cursor: not-allowed;
+}
+
+/* Form layouts */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--slate-300);
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid var(--slate-800);
+  border-radius: 4px;
+  padding: 0.25rem 0.75rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-container:focus-within {
+  border-color: var(--blue-500);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+}
+
+.form-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--slate-100);
+  font-family: inherit;
+  font-size: 0.875rem;
+  padding: 0.5rem 0;
+}
+
+.form-input:focus {
+  outline: none;
+}
+
+.form-input::placeholder {
+  color: var(--slate-600);
+}

@@ -92,15 +92,6 @@
   overflow-y: auto;
 }
 
-.sidebar-header {
-  font-weight: 900;
-  font-size: 0.875rem; /* text-sm */
-  color: var(--slate-500);
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  border-bottom: 2px solid var(--slate-800);
-  padding-bottom: 0.75rem; /* pb-3 */
-}
 
 .mission-quote {
   background-color: rgba(30, 58, 138, 0.2); /* bg-blue-900/20 */

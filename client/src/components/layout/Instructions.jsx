@@ -4,7 +4,7 @@ import './Instructions.css';
 function Instructions() {
   return (
     <div className="instructions-container">
-      <h1 className="instructions-title">How to Play</h1>
+      <h1 className="view-title instructions-title">How to Play</h1>
 
       <div className="instructions-content">
         <section>
@@ -46,7 +46,7 @@ function Instructions() {
         <div className="ready-container">
           <span className="ready-text">Ready to run?</span>
           <Link to="/login" className="login-link">
-            <button className="login-button">Login</button>
+            <button className="btn btn-primary login-button">Login</button>
           </Link>
         </div>
       </div>
