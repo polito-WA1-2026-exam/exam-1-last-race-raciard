@@ -47,10 +47,9 @@ export function getCharacterState(phase, gameResult, execStep) {
  * @param {object} currentGame - Information about the active game.
  * @param {number} execStep - The index of the current execution step.
  * @param {object} gameResult - The game result payload.
- * @param {Array<string>} selectedRoute - The user's planned route.
  * @returns {string|null} The derived station ID.
  */
-export function getCurrentStationId(phase, currentGame, execStep, gameResult, selectedRoute) {
+export function getCurrentStationId(phase, currentGame, execStep, gameResult) {
   const steps = gameResult?.steps || [];
   const isFinished = execStep >= steps.length;
   const currentStep = steps[execStep];
@@ -60,7 +59,7 @@ export function getCurrentStationId(phase, currentGame, execStep, gameResult, se
   if (phase === PHASES.SETUP) {
     currentStationId = null;
   } else if (phase === PHASES.PLANNING) {
-    currentStationId = selectedRoute[selectedRoute.length - 1] || currentStationId;
+    currentStationId = currentGame?.start?.id || null;
   } else if (steps.length > 0) {
     currentStationId = isFinished 
       ? (lastStep.isFailed ? lastStep.from : lastStep.to) 

@@ -52,9 +52,45 @@ class GameService {
     }
 
     /**
+     * Attempts to orient the undirected segments tuples into directed segments starting at startId.
+     * Detects discontinuities/jumps.
+     * @param {Array<number[]>} route - Array of undirected segments [s1, s2]
+     * @param {number} startId - Assigned starting station ID
+     * @returns {{ oriented: Array<{from: number, to: number, isDiscontinuity: boolean}>, hasDiscontinuity: boolean }}
+     */
+    orientRoute(route, startId) {
+        const oriented = [];
+        let currentEnd = startId;
+        let hasDiscontinuity = false;
+
+        for (let i = 0; i < route.length; i++) {
+            const seg = route[i];
+            const u = seg[0];
+            const v = seg[1];
+
+            if (hasDiscontinuity) {
+                oriented.push({ from: u, to: v, isDiscontinuity: true });
+            } else {
+                if (u === currentEnd) {
+                    oriented.push({ from: u, to: v, isDiscontinuity: false });
+                    currentEnd = v;
+                } else if (v === currentEnd) {
+                    oriented.push({ from: v, to: u, isDiscontinuity: false });
+                    currentEnd = u;
+                } else {
+                    hasDiscontinuity = true;
+                    oriented.push({ from: u, to: v, isDiscontinuity: true });
+                    currentEnd = v;
+                }
+            }
+        }
+        return { oriented, hasDiscontinuity };
+    }
+
+    /**
      * Validates if a submitted route is valid according to the active game's rules.
      * Checks for path continuity, duplicate links, start/end matching, and the 95-second time limit.
-     * @param {number[]} route - Array of station IDs representing the chosen path.
+     * @param {Array<number[]>} route - Array of undirected segments [s1, s2] representing the chosen path.
      * @param {Object} currentGame - The current active game session information.
      * @param {number} currentGame.startId - The assigned start station ID.
      * @param {number} currentGame.destinationId - The assigned destination station ID.
@@ -75,10 +111,12 @@ class GameService {
         if (!route || route.length === 0)
             return 'EMPTY ROUTE SUBMITTED';
 
-        if (route[0] !== startId)
+        const { oriented } = this.orientRoute(route, startId);
+
+        if (oriented[0].from !== startId)
             return 'ROUTE DOES NOT START AT ASSIGNED STATION';
 
-        if (route[route.length - 1] !== destinationId)
+        if (oriented[oriented.length - 1].to !== destinationId)
             return 'ROUTE DOES NOT REACH DESTINATION';
 
         const adj = await this.networkDao.getAdjacencyList();
@@ -88,9 +126,10 @@ class GameService {
         let currentLineId = null;
         const usedLinks = new Set();
 
-        for (let i = 0; i < route.length - 1; i++) {
-            const s1 = route[i];
-            const s2 = route[i+1];
+        for (let i = 0; i < oriented.length; i++) {
+            const step = oriented[i];
+            const s1 = step.from;
+            const s2 = step.to;
 
             const linkKey = [s1, s2].sort((a, b) => a - b).join('-');
             if (usedLinks.has(linkKey))
@@ -104,6 +143,11 @@ class GameService {
             if (availableLines.length === 0)
                 return `NO TRACK FROM ${nameOf(s1)} TO ${nameOf(s2)}`;
 
+            if (step.isDiscontinuity) {
+                const prevStep = oriented[i-1];
+                return `NO TRACK FROM ${nameOf(prevStep.to)} TO ${nameOf(s1)}`;
+            }
+
             if (currentLineId === null || !availableLines.includes(currentLineId)) {
                 currentLineId = availableLines[0];
             }
@@ -115,7 +159,7 @@ class GameService {
     /**
      * Executes the transit of a route, applying random events and calculating the final score/coins.
      * If validation failed, builds a mock failure step sequence and returns zero score.
-     * @param {number[]} route - Array of station IDs representing the chosen path.
+     * @param {Array<number[]>} route - Array of undirected segments [s1, s2] representing the chosen path.
      * @param {string|null} failReason - The validation failure reason, if the route was already flagged as invalid.
      * @param {Object} currentGame - The current active game session information.
      * @param {number} currentGame.startId - The assigned start station ID.
@@ -143,14 +187,16 @@ class GameService {
         let currentLineId = null;
         const usedLinks = new Set();
 
+        const { oriented } = this.orientRoute(route, startId);
+
         // Check if the route starts at a completely wrong station. If so, fail on the very first segment.
         if (failReason === 'ROUTE DOES NOT START AT ASSIGNED STATION') {
             return {
                 isInvalid: true,
                 score: 0,
                 steps: [{
-                    from: route[0],
-                    to: route[1] || route[0],
+                    from: oriented[0].from,
+                    to: oriented[0].to || oriented[0].from,
                     event: { description: 'ROUTE DOES NOT START AT ASSIGNED STATION', effect: 0 },
                     coins: 0,
                     lineId: null,
@@ -160,11 +206,31 @@ class GameService {
             };
         }
 
-        for (let i = 0; i < route.length - 1; i++) {
-            const s1 = route[i];
-            const s2 = route[i+1];
+        for (let i = 0; i < oriented.length; i++) {
+            const step = oriented[i];
+            const s1 = step.from;
+            const s2 = step.to;
 
-            // 1. Duplicate link check
+            // 1. Continuity check
+            if (step.isDiscontinuity) {
+                const prevStep = oriented[i-1];
+                steps.push({
+                    from: prevStep.to,
+                    to: s1,
+                    event: { description: 'CRITICAL ERROR: NO TRACK DETECTED', effect: -20 },
+                    coins: 0,
+                    lineId: null,
+                    isFailed: true
+                });
+                return {
+                    isInvalid: true,
+                    score: 0,
+                    steps,
+                    failReason: failReason || `NO TRACK FROM ${nameOf(prevStep.to)} TO ${nameOf(s1)}`
+                };
+            }
+
+            // 2. Duplicate link check
             const linkKey = [s1, s2].sort((a, b) => a - b).join('-');
             if (usedLinks.has(linkKey)) {
                 steps.push({
@@ -184,7 +250,7 @@ class GameService {
             }
             usedLinks.add(linkKey);
 
-            // 2. Track check
+            // 3. Track check
             const availableLines = (adj[s1] || [])
                 .filter(n => n.to === s2)
                 .map(n => n.lineId);

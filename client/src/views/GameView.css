@@ -296,3 +296,33 @@
     top: 2rem;
   }
 }
+
+.planning-route-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.route-point {
+  display: flex;
+  flex-direction: column;
+}
+
+.point-label {
+  font-size: 9px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.8;
+}
+
+.point-name {
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+.route-connector {
+  font-size: 0.75rem;
+  opacity: 0.6;
+  margin: 0.1rem 0;
+}

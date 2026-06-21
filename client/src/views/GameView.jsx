@@ -18,26 +18,63 @@ function GameLayout() {
     gameActions,
   } = useGameContext();
 
-  const { stations, lines, loading: networkLoading } = useNetwork();
+  const { stations, lines, segments, loading: networkLoading } = useNetwork();
 
   const [selectedRoute, setSelectedRoute] = useState([]);
   const [selectedCharacter, setSelectedCharacter] = useState('Player');
   const [execStep, setExecStep] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [validationError, setValidationError] = useState('');
 
   const currentGameId = currentGame ? `${currentGame.start.id}-${currentGame.destination.id}` : null;
   const [prevGameId, setPrevGameId] = useState(null);
 
   if (currentGameId !== prevGameId) {
     setPrevGameId(currentGameId);
-    setSelectedRoute(currentGame ? [currentGame.start.id] : []);
+    setSelectedRoute([]);
     setExecStep(0);
+    setValidationError('');
   }
 
-  const submitRoute = (route) => {
+  const steps = gameResult?.steps || [];
+  const isFinished = execStep >= steps.length;
+  const currentStep = steps[execStep];
+  const lastStep = steps[steps.length - 1];
+  const hasFailedStep = steps.some(s => s.isFailed) || gameResult?.isInvalid;
+
+  const showFailOverlay = gameResult?.isInvalid && (
+    phase === PHASES.RESULT ||
+    (phase === PHASES.EXECUTION && (currentStep?.isFailed || (isFinished && lastStep?.isFailed)))
+  );
+
+  const showSuccessOverlay = !gameResult?.isInvalid && steps.length > 0 && (
+    phase === PHASES.RESULT ||
+    (phase === PHASES.EXECUTION && isFinished && !hasFailedStep)
+  );
+
+  const submitRoute = (segments) => {
     if (phase === PHASES.PLANNING) {
-      gameActions.submitRoute(route);
+      if (segments.length === 0) {
+        setValidationError("Please add a path to submit");
+        setTimeout(() => setValidationError(''), 3000);
+        return;
+      }
+      setValidationError('');
+      gameActions.submitRoute(segments);
     }
+  };
+
+  const handleSegmentClick = (seg) => {
+    if (phase !== PHASES.PLANNING) return;
+
+    // Check if already selected
+    const isAlreadySelected = selectedRoute.some(
+      s => (s[0] === seg.s1_id && s[1] === seg.s2_id) || (s[0] === seg.s2_id && s[1] === seg.s1_id)
+    );
+    if (isAlreadySelected) return;
+
+    setValidationError('');
+    setSelectedRoute([...selectedRoute, [seg.s1_id, seg.s2_id]]);
   };
 
   if (networkLoading) return <div className="loading-initializing">Initializing Network...</div>;
@@ -62,13 +99,35 @@ function GameLayout() {
               />
               <NetworkMap
                 selectedRoute={selectedRoute}
-                setSelectedRoute={setSelectedRoute}
                 execStep={execStep}
                 setExecStep={setExecStep}
                 selectedCharacter={selectedCharacter}
                 stations={stations}
                 lines={lines}
               />
+              {showFailOverlay && gameResult?.failReason && (
+                <div className="fail-overlay">
+                  <span className="fail-overlay-label">MISSION FAILED</span>
+                  <span className="fail-overlay-reason">{gameResult.failReason}</span>
+                </div>
+              )}
+              {showSuccessOverlay && (
+                <div className="success-overlay animate-pulse">
+                  <span className="success-overlay-label">RACE COMPLETED</span>
+                  <span className="success-overlay-score">Score: {gameResult?.score || 0} Coins</span>
+                </div>
+              )}
+              {validationError && (
+                <div 
+                  className="fail-overlay" 
+                  onClick={() => setValidationError('')} 
+                  style={{ cursor: 'pointer', pointerEvents: 'auto' }}
+                >
+                  <span className="fail-overlay-label">SUBMIT ERROR</span>
+                  <span className="fail-overlay-reason">{validationError}</span>
+                </div>
+              )}
+
             </div>
 
             <div className="glass-layer"></div>
@@ -121,14 +180,25 @@ function GameLayout() {
           {phase === PHASES.PLANNING && (
             <div className="planning-sidebar">
               <div className="planning-header">
-                <p className="destination-label">Final Destination</p>
-                <p className="destination-name">{currentGame?.destination.name.toUpperCase()}</p>
+                <div className="planning-route-info">
+                  <div className="route-point">
+                    <span className="point-label">Starting From</span>
+                    <span className="point-name">{currentGame?.start?.name.toUpperCase()}</span>
+                  </div>
+                  <div className="route-connector">⬇</div>
+                  <div className="route-point">
+                    <span className="point-label">Final Destination</span>
+                    <span className="point-name">{currentGame?.destination?.name.toUpperCase()}</span>
+                  </div>
+                </div>
               </div>
               <div className="planning-content">
                 <RouteBuilder
                   selectedRoute={selectedRoute}
                   stations={stations}
                   onUndo={() => setSelectedRoute(prev => prev.slice(0, -1))}
+                  segments={segments}
+                  onSegmentClick={handleSegmentClick}
                 />
               </div>
             </div>

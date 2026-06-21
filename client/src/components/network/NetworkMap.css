@@ -715,8 +715,12 @@
     0 -0.07em black;
 }
 
-.station-label-target {
+.station-label-destination {
   fill: var(--yellow-400);
+}
+
+.station-label-start {
+  fill: var(--green-400);
 }
 
 .station-label-current {

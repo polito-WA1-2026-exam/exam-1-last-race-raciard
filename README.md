@@ -1,11 +1,12 @@
 # Exam #1: "Last Race"
-## Student: s123456 LASTNAME FIRSTNAME 
+## Student: s338616 Bracciale Riccardo 
 
 ## React Client Application Routes
 
 - Route `/`: Main gameplay view. Contains the interactive subway map visualization, handles route planning logic, and displays the step-by-step animation of the executed journey.
+- Route `/login`: Login view. Handles user authentication.
 - Route `/ranking`: Leaderboard view. Fetches and displays the global ranking of users based on their total cumulative scores across all played games.
-- Route `*`: Catch-all wildcard route that automatically redirects any unknown URL paths back to the root `/` page.
+- Route `*`: Route that automatically redirects any unknown URL paths back to the root `/` page.
 
 ## API Server
 
@@ -31,7 +32,7 @@
   - Request parameters: None (Requires Authentication)
   - Response: `200 OK` with a JSON object dictating the random start and destination stations: `{ "start": { "id": 1, "name": "..." }, "destination": { "id": 12, "name": "..." } }`.
 - POST `/api/games/result`
-  - Request body: JSON object containing the planned route as an array of station IDs: `{ "route": [1, 2, 3, 4] }`
+  - Request body: JSON object containing the planned route as an array of station ID tuples (undirected segments): `{ "route": [[1, 2], [3, 4]] }`
   - Response: `200 OK` with a JSON object detailing the game's execution result: `{ "score": 15, "steps": [...], "isInvalid": false, "failReason": null }`. Or `403 Forbidden` if the planning timer expired.
 
 ## Database Tables

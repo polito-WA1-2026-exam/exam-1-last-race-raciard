@@ -11,8 +11,7 @@ import { useMapLayout } from '../../hooks/useMapLayout';
 import {
   getCurrentSegment,
   getCharacterState,
-  getCurrentStationId,
-  getHighlightStations
+  getCurrentStationId
 } from '../../utils/gameDerivations';
 import './NetworkMap.css';
 
@@ -30,12 +29,11 @@ function ZoomControls() {
 
 
 /**
- * The core mapping component that visualizes the subway network, handles interactive route planning,
+ * The core mapping component that visualizes the subway network
  * and animates the character sprite during execution.
  * 
  * @param {object} props
  * @param {Array<string>} props.selectedRoute - The current planned route of station IDs.
- * @param {function} props.setSelectedRoute - Callback to update the planned route.
  * @param {number} props.execStep - The current step index during execution animation.
  * @param {function} props.setExecStep - Callback to update the execution step index.
  * @param {string} [props.selectedCharacter='Player'] - The identifier for the chosen avatar sprite.
@@ -44,7 +42,6 @@ function ZoomControls() {
  */
 function NetworkMap({
   selectedRoute,
-  setSelectedRoute,
   execStep,
   setExecStep,
   selectedCharacter = "Player",
@@ -64,86 +61,23 @@ function NetworkMap({
   } = useMapLayout(stations, lines);
 
   const steps = gameResult?.steps || [];
-  const isFinished = execStep >= steps.length;
   const currentStep = steps[execStep];
-  const lastStep = steps[steps.length - 1];
-  const hasFailedStep = steps.some(s => s.isFailed) || gameResult?.isInvalid;
 
   const currentSegment = useMemo(() => getCurrentSegment(phase, currentStep), [phase, currentStep]);
   const characterState = useMemo(() => getCharacterState(phase, gameResult, execStep), [phase, gameResult, execStep]);
-  const currentStationId = useMemo(() => getCurrentStationId(phase, currentGame, execStep, gameResult, selectedRoute), [phase, currentGame, execStep, gameResult, selectedRoute]);
-  const highlightStations = useMemo(() => getHighlightStations(phase, currentGame), [phase, currentGame]);
+  const currentStationId = useMemo(() => getCurrentStationId(phase, currentGame, execStep, gameResult), [phase, currentGame, execStep, gameResult]);
 
-  const showFailOverlay = gameResult?.isInvalid && (
-    phase === PHASES.RESULT ||
-    (phase === PHASES.EXECUTION && (currentStep?.isFailed || (isFinished && lastStep?.isFailed)))
-  );
-
-  const showSuccessOverlay = !gameResult?.isInvalid && steps.length > 0 && (
-    phase === PHASES.RESULT ||
-    (phase === PHASES.EXECUTION && isFinished && !hasFailedStep)
-  );
-
-  // Handle station clicking internally
-  const handleStationClick = (targetId) => {
-    if (phase !== PHASES.PLANNING) return;
-
-    const currentId = selectedRoute.length === 0
-      ? currentGame?.start.id
-      : selectedRoute[selectedRoute.length - 1];
-
-    if (targetId === currentId) return;
-
-    // Clicking the previous station acts as undo
-    if (selectedRoute.length > 1 && targetId === selectedRoute[selectedRoute.length - 2]) {
-      setSelectedRoute(selectedRoute.slice(0, -1));
-      return;
-    }
-
-    // Prevent duplicate links
-    let linkExists = false;
-    for (let i = 0; i < selectedRoute.length - 1; i++) {
-      const s1 = selectedRoute[i];
-      const s2 = selectedRoute[i + 1];
-      if ((s1 === currentId && s2 === targetId) || (s1 === targetId && s2 === currentId)) {
-        linkExists = true;
-        break;
-      }
-    }
-    if (linkExists) return;
-
-    setSelectedRoute([...selectedRoute, targetId]);
-  };
-
-  const currentStation = phase === PHASES.SETUP ? null : stations.find(s => s.id === currentStationId);
-
-  // Animation coordinates logic
-  let startCoords = currentStation ? (stationCoords[currentStation.id] || null) : null;
-  let endCoords = null;
+  // Player position coordinate animation logic
+  let playerPosition = currentStationId ? stationCoords[currentStationId] || null : null;
+  let playerMovesTo = null;
 
   if (currentSegment) {
-    const s1 = stations.find(s => s.id === currentSegment.s1_id);
-    const s2 = stations.find(s => s.id === currentSegment.s2_id);
-    if (s1 && s2) {
-      startCoords = stationCoords[s1.id];
-      endCoords = stationCoords[s2.id];
-    }
+    playerPosition = stationCoords[currentSegment.s1_id] || null;
+    playerMovesTo = stationCoords[currentSegment.s2_id] || null;
   }
 
   return (
     <div className="canvas-container">
-      {showFailOverlay && gameResult?.failReason && (
-        <div className="fail-overlay">
-          <span className="fail-overlay-label">MISSION FAILED</span>
-          <span className="fail-overlay-reason">{gameResult.failReason}</span>
-        </div>
-      )}
-      {showSuccessOverlay && (
-        <div className="success-overlay animate-pulse">
-          <span className="success-overlay-label">RACE COMPLETED</span>
-          <span className="success-overlay-score">Score: {gameResult?.score || 0} Coins</span>
-        </div>
-      )}
       <TransformWrapper
         initialScale={1}
         minScale={0.4}
@@ -179,9 +113,9 @@ function NetworkMap({
                 <RoutePath
                   variant="planning"
                   stationCoords={stationCoords}
-                  segments={selectedRoute.slice(1).map((stationId, i) => ({
-                    s1_id: selectedRoute[i],
-                    s2_id: stationId
+                  segments={selectedRoute.map(seg => ({
+                    s1_id: seg[0],
+                    s2_id: seg[1]
                   }))}
                 />
               )}
@@ -217,21 +151,20 @@ function NetworkMap({
                   key={station.id}
                   station={station}
                   coords={stationCoords[station.id] || { x: 0, y: 0 }}
-                  isTarget={highlightStations.includes(station.id)}
+                  isStart={phase !== PHASES.SETUP && station.id === currentGame?.start?.id}
+                  isDestination={phase !== PHASES.SETUP && station.id === currentGame?.destination?.id}
                   isCurrent={station.id === currentStationId}
-                  canClick={phase === PHASES.PLANNING}
-                  onClick={handleStationClick}
-                  isInterchange={stationLineCounts[station.id] > 1}
+                  isInterchange={phase == PHASES.SETUP ? stationLineCounts[station.id] > 1 : false}
                 />
               ))}
 
               {/* Draw Character with Animation */}
-              {startCoords && (
+              {playerPosition && (
                 <CharacterSprite
-                  x={startCoords.x}
-                  y={startCoords.y}
-                  x2={endCoords?.x}
-                  y2={endCoords?.y}
+                  x={playerPosition.x}
+                  y={playerPosition.y}
+                  x2={playerMovesTo?.x}
+                  y2={playerMovesTo?.y}
                   progress={walkProgress}
                   state={characterState}
                   character={selectedCharacter}

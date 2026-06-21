@@ -31,7 +31,7 @@ function GameControls({ isExpanded, setIsExpanded, onSubmit }) {
             case PHASES.PLANNING: return 'Route Planning';
             case PHASES.EXECUTION: return 'Journey Execution';
             case PHASES.RESULT: return 'Final Results';
-            default: return 'System Map';
+            default: return '';
         }
     };
 
@@ -42,7 +42,10 @@ function GameControls({ isExpanded, setIsExpanded, onSubmit }) {
         if (phase === PHASES.SETUP) {
             return "Click on START RACE button to play!";
         }
-        return '';
+        if (phase === PHASES.EXECUTION) {
+            return "Good Luck!"
+        }
+        return 'Nice Play!';
     };
     return (
         <header className="map-header">
