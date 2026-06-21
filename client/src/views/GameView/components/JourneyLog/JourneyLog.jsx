@@ -1,5 +1,5 @@
-import LineBadge from '../network/LineBadge';
-import { PHASES } from '../../hooks/useGame';
+import LineBadge from '../LineBadge/LineBadge';
+import { PHASES } from '../../../../hooks/useGame';
 import './JourneyLog.css';
 
 function JourneyLog({ gameResult, phase, execStep, stations = [], lines = [] }) {

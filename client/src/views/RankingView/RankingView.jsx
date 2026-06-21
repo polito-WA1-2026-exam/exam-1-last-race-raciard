@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { getRanking } from '../services/api';
-import RankingTable from '../components/ranking/RankingTable';
+import { useAuth } from '../../contexts/AuthContext';
+import { getRanking } from '../../services/api';
+import RankingTable from './components/RankingTable/RankingTable';
 import './RankingView.css';
 
 function RankingView() {

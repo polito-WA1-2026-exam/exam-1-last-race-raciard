@@ -1,18 +1,18 @@
 import { useMemo } from 'react';
 import { TransformWrapper, TransformComponent, useControls } from 'react-zoom-pan-pinch';
-import { PHASES } from '../../hooks/useGame';
+import { PHASES } from '../../../../hooks/useGame';
 import RoutePath from './RoutePath';
 import StationMarker from './StationMarker';
 import CharacterSprite from './CharacterSprite';
-import { LINE_PALETTE, getLineColor } from '../../utils/linePalette';
-import { useGameContext } from '../../contexts/GameContext';
-import { useWalkAnimation } from '../../hooks/useWalkAnimation';
-import { useMapLayout } from '../../hooks/useMapLayout';
+import { LINE_PALETTE, getLineColor } from '../../../../utils/linePalette';
+import { useGameContext } from '../../../../contexts/GameContext';
+import { useWalkAnimation } from '../../../../hooks/useWalkAnimation';
+import { useMapLayout } from '../../../../hooks/useMapLayout';
 import {
   getCurrentSegment,
   getCharacterState,
   getCurrentStationId
-} from '../../utils/gameDerivations';
+} from '../../../../utils/gameDerivations';
 import './NetworkMap.css';
 
 function ZoomControls() {

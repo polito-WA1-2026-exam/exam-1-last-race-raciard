@@ -1,5 +1,5 @@
-import { PHASES, useGameContext } from "../../contexts/GameContext";
-import { useTimer } from "../../hooks/useTimer";
+import { PHASES, useGameContext } from "../../../../contexts/GameContext";
+import { useTimer } from "../../../../hooks/useTimer";
 
 /**
  * Renders the top control bar inside the NetworkMap.

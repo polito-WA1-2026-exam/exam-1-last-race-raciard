@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { GameProvider, useGameContext, PHASES } from '../contexts/GameContext';
-import { useNetwork } from '../hooks/useNetwork';
-import Instructions from '../components/layout/Instructions';
-import NetworkMap from '../components/network/NetworkMap';
-import GameControls from '../components/network/GameControls';
-import RouteBuilder from '../components/game/RouteBuilder';
-import JourneyLog from '../components/game/JourneyLog';
-import { CHARACTERS } from '../components/network/CharacterSprite';
+import { useAuth } from '../../contexts/AuthContext';
+import { GameProvider, useGameContext, PHASES } from '../../contexts/GameContext';
+import { useNetwork } from '../../hooks/useNetwork';
+import Instructions from './components/Instructions/Instructions';
+import NetworkMap from './components/NetworkMap/NetworkMap';
+import GameControls from './components/NetworkMap/GameControls';
+import RouteBuilder from './components/RouteBuilder/RouteBuilder';
+import JourneyLog from './components/JourneyLog/JourneyLog';
+import { CHARACTERS } from './components/NetworkMap/CharacterSprite';
 import './GameView.css';
 
 function GameLayout() {

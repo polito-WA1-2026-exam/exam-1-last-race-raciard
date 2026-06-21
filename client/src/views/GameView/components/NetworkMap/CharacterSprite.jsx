@@ -1,37 +1,37 @@
 // Character Assets Mapping
-import player_idle from '../../assets/kenney_platformer-characters/PNG/Player/Poses/player_idle.png';
-import player_walk1 from '../../assets/kenney_platformer-characters/PNG/Player/Poses/player_walk1.png';
-import player_walk2 from '../../assets/kenney_platformer-characters/PNG/Player/Poses/player_walk2.png';
-import player_cheer from '../../assets/kenney_platformer-characters/PNG/Player/Poses/player_cheer1.png';
-import player_hurt from '../../assets/kenney_platformer-characters/PNG/Player/Poses/player_hurt.png';
+import player_idle from '../../../../assets/kenney_platformer-characters/PNG/Player/Poses/player_idle.png';
+import player_walk1 from '../../../../assets/kenney_platformer-characters/PNG/Player/Poses/player_walk1.png';
+import player_walk2 from '../../../../assets/kenney_platformer-characters/PNG/Player/Poses/player_walk2.png';
+import player_cheer from '../../../../assets/kenney_platformer-characters/PNG/Player/Poses/player_cheer1.png';
+import player_hurt from '../../../../assets/kenney_platformer-characters/PNG/Player/Poses/player_hurt.png';
 
-import adventurer_idle from '../../assets/kenney_platformer-characters/PNG/Adventurer/Poses/adventurer_idle.png';
-import adventurer_walk1 from '../../assets/kenney_platformer-characters/PNG/Adventurer/Poses/adventurer_walk1.png';
-import adventurer_walk2 from '../../assets/kenney_platformer-characters/PNG/Adventurer/Poses/adventurer_walk2.png';
-import adventurer_cheer from '../../assets/kenney_platformer-characters/PNG/Adventurer/Poses/adventurer_cheer1.png';
-import adventurer_hurt from '../../assets/kenney_platformer-characters/PNG/Adventurer/Poses/adventurer_hurt.png';
+import adventurer_idle from '../../../../assets/kenney_platformer-characters/PNG/Adventurer/Poses/adventurer_idle.png';
+import adventurer_walk1 from '../../../../assets/kenney_platformer-characters/PNG/Adventurer/Poses/adventurer_walk1.png';
+import adventurer_walk2 from '../../../../assets/kenney_platformer-characters/PNG/Adventurer/Poses/adventurer_walk2.png';
+import adventurer_cheer from '../../../../assets/kenney_platformer-characters/PNG/Adventurer/Poses/adventurer_cheer1.png';
+import adventurer_hurt from '../../../../assets/kenney_platformer-characters/PNG/Adventurer/Poses/adventurer_hurt.png';
 
-import female_idle from '../../assets/kenney_platformer-characters/PNG/Female/Poses/female_idle.png';
-import female_walk1 from '../../assets/kenney_platformer-characters/PNG/Female/Poses/female_walk1.png';
-import female_walk2 from '../../assets/kenney_platformer-characters/PNG/Female/Poses/female_walk2.png';
-import female_cheer from '../../assets/kenney_platformer-characters/PNG/Female/Poses/female_cheer1.png';
-import female_hurt from '../../assets/kenney_platformer-characters/PNG/Female/Poses/female_hurt.png';
+import female_idle from '../../../../assets/kenney_platformer-characters/PNG/Female/Poses/female_idle.png';
+import female_walk1 from '../../../../assets/kenney_platformer-characters/PNG/Female/Poses/female_walk1.png';
+import female_walk2 from '../../../../assets/kenney_platformer-characters/PNG/Female/Poses/female_walk2.png';
+import female_cheer from '../../../../assets/kenney_platformer-characters/PNG/Female/Poses/female_cheer1.png';
+import female_hurt from '../../../../assets/kenney_platformer-characters/PNG/Female/Poses/female_hurt.png';
 
-import soldier_idle from '../../assets/kenney_platformer-characters/PNG/Soldier/Poses/soldier_idle.png';
-import soldier_walk1 from '../../assets/kenney_platformer-characters/PNG/Soldier/Poses/soldier_walk1.png';
-import soldier_walk2 from '../../assets/kenney_platformer-characters/PNG/Soldier/Poses/soldier_walk2.png';
-import soldier_cheer from '../../assets/kenney_platformer-characters/PNG/Soldier/Poses/soldier_cheer1.png';
-import soldier_hurt from '../../assets/kenney_platformer-characters/PNG/Soldier/Poses/soldier_hurt.png';
+import soldier_idle from '../../../../assets/kenney_platformer-characters/PNG/Soldier/Poses/soldier_idle.png';
+import soldier_walk1 from '../../../../assets/kenney_platformer-characters/PNG/Soldier/Poses/soldier_walk1.png';
+import soldier_walk2 from '../../../../assets/kenney_platformer-characters/PNG/Soldier/Poses/soldier_walk2.png';
+import soldier_cheer from '../../../../assets/kenney_platformer-characters/PNG/Soldier/Poses/soldier_cheer1.png';
+import soldier_hurt from '../../../../assets/kenney_platformer-characters/PNG/Soldier/Poses/soldier_hurt.png';
 
-import zombie_idle from '../../assets/kenney_platformer-characters/PNG/Zombie/Poses/zombie_idle.png';
-import zombie_walk1 from '../../assets/kenney_platformer-characters/PNG/Zombie/Poses/zombie_walk1.png';
-import zombie_walk2 from '../../assets/kenney_platformer-characters/PNG/Zombie/Poses/zombie_walk2.png';
-import zombie_cheer from '../../assets/kenney_platformer-characters/PNG/Zombie/Poses/zombie_cheer1.png';
-import zombie_hurt from '../../assets/kenney_platformer-characters/PNG/Zombie/Poses/zombie_hurt.png';
+import zombie_idle from '../../../../assets/kenney_platformer-characters/PNG/Zombie/Poses/zombie_idle.png';
+import zombie_walk1 from '../../../../assets/kenney_platformer-characters/PNG/Zombie/Poses/zombie_walk1.png';
+import zombie_walk2 from '../../../../assets/kenney_platformer-characters/PNG/Zombie/Poses/zombie_walk2.png';
+import zombie_cheer from '../../../../assets/kenney_platformer-characters/PNG/Zombie/Poses/zombie_cheer1.png';
+import zombie_hurt from '../../../../assets/kenney_platformer-characters/PNG/Zombie/Poses/zombie_hurt.png';
 
-import zeb_idle from '../../assets/kenney_platformer-characters/PNG/Zeb/Poses/zeb_idle.png';
-import zeb_walk1 from '../../assets/kenney_platformer-characters/PNG/Zeb/Poses/zeb_walk1.png';
-import zeb_walk2 from '../../assets/kenney_platformer-characters/PNG/Zeb/Poses/zeb_walk2.png';
+import zeb_idle from '../../../../assets/kenney_platformer-characters/PNG/Zeb/Poses/zeb_idle.png';
+import zeb_walk1 from '../../../../assets/kenney_platformer-characters/PNG/Zeb/Poses/zeb_walk1.png';
+import zeb_walk2 from '../../../../assets/kenney_platformer-characters/PNG/Zeb/Poses/zeb_walk2.png';
 
 const CHARACTERS = {
   Player: { idle: player_idle, walk1: player_walk1, walk2: player_walk2, win: player_cheer, lose: player_hurt },

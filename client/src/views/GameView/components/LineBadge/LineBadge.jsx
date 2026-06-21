@@ -1,4 +1,4 @@
-import { getLineColor } from '../../utils/linePalette';
+import { getLineColor } from '../../../../utils/linePalette';
 import './LineBadge.css';
 
 /**
