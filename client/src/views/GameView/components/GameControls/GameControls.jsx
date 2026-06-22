@@ -3,15 +3,24 @@ import { PHASES, useGameContext } from "../../../../contexts/GameContext";
 import "./GameControls.css";
 
 function Countdown() {
-    const [timeLeft, setTimeLeft] = useState(90);
+    const { endTime } = useGameContext();
+    const [timeLeft, setTimeLeft] = useState(() => {
+        if (!endTime) return 90;
+        return Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+    });
 
     useEffect(() => {
-        const id = setTimeout(() => {
-            setTimeLeft(prev => Math.max(prev - 1, 0));
-        }, 1000);
+        if (!endTime) return;
 
-        return () => clearTimeout(id);
-    }, [timeLeft]);
+        const updateTimer = () => {
+            setTimeLeft(Math.max(0, Math.ceil((endTime - Date.now()) / 1000)));
+        };
+
+        updateTimer();
+        const id = setInterval(updateTimer, 100);
+
+        return () => clearInterval(id);
+    }, [endTime]);
 
     return (
         <div className={`timer-compact ${timeLeft < 20 ? 'timer-urgent' : 'timer-normal'}`}>

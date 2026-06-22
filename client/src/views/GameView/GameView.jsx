@@ -183,12 +183,10 @@ function GameLayout() {
               <div className="planning-header">
                 <div className="planning-route-info">
                   <div className="route-point">
-                    <span className="point-label">Starting From</span>
                     <span className="point-name">{currentGame?.start?.name.toUpperCase()}</span>
                   </div>
                   <div className="route-connector">⬇</div>
                   <div className="route-point">
-                    <span className="point-label">Final Destination</span>
                     <span className="point-name">{currentGame?.destination?.name.toUpperCase()}</span>
                   </div>
                 </div>

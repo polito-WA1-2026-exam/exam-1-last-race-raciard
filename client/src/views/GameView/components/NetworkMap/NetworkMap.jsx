@@ -20,7 +20,7 @@ function ZoomControls() {
   return (
     <div className="zoom-controls">
       <button className="zoom-btn" onClick={() => zoomIn()} title="Zoom in">+</button>
-      <button className="zoom-btn" onClick={() => resetTransform()} title="Reset">⌂</button>
+      <button className="zoom-btn" onClick={() => resetTransform()} title="Reset">=</button>
       <button className="zoom-btn" onClick={() => zoomOut()} title="Zoom out">-</button>
     </div>
   );
@@ -44,7 +44,7 @@ function NetworkMap({
   selectedRoute,
   execStep,
   setExecStep,
-  selectedCharacter = "Player",
+  selectedCharacter = "Franco",
   stations = [],
   lines = []
 }) {

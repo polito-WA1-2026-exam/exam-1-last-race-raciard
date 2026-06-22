@@ -25,7 +25,7 @@ function LoginForm(props) {
   return (
     <form action={formAction} className="login-form">
       {state.error && (
-        <div className="login-error-alert animate-shake">
+        <div className="login-error-alert">
           <span className="error-icon">⚠️</span> {state.error}
         </div>
       )}

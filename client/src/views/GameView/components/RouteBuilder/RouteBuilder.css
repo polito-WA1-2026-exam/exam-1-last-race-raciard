@@ -167,7 +167,7 @@
 
 .station-box-name {
   font-weight: 700;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--slate-200);
   white-space: normal;
   overflow-wrap: break-word;
@@ -197,4 +197,22 @@
   z-index: 1;
   opacity: 0.85;
   background-color: var(--slate-700);
+}
+
+.station-box.s1 {
+  justify-content: flex-end;
+}
+
+.station-box.s1 .station-box-name {
+  text-align: right;
+  flex: 1;
+}
+
+.station-box.s2 {
+  justify-content: flex-start;
+}
+
+.station-box.s2 .station-box-name {
+  text-align: left;
+  flex: 1;
 }

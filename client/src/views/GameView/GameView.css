@@ -73,7 +73,7 @@
 
 @media (min-width: 1024px) {
   .sidebar-section {
-    width: 350px;
+    width: 420px;
     order: 2;
     max-height: 100%;
   }
@@ -81,7 +81,7 @@
 
 @media (min-width: 1280px) {
   .sidebar-section {
-    width: 420px;
+    width: 500px;
   }
 }
 
@@ -345,9 +345,9 @@
 }
 
 .route-connector {
-  font-size: 0.75rem;
-  opacity: 0.6;
-  margin: 0.1rem 0;
+  font-size: 1.5rem;
+  opacity: 0.85;
+  margin: 0.2rem 0;
 }
 
 .sidebar-footer-banner {

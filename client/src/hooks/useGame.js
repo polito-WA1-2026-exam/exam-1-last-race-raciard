@@ -78,6 +78,7 @@ export function useGame() {
     currentGame,
     gameResult,
     selectedRoute,
+    endTime,
     gameActions: {
       startGame,
       submitRoute,

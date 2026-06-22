@@ -76,8 +76,8 @@ function RouteBuilder({
               >
                 <div className="segment-graphics-wrapper">
                   <div className="station-box s1">
-                    <span className="station-box-dot"></span>
                     <span className="station-box-name" title={seg.s1_name}>{seg.s1_name}</span>
+                    <span className="station-box-dot"></span>
                   </div>
 
                   <div className="connection-track-container">
