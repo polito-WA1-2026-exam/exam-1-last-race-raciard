@@ -7,7 +7,7 @@ const stations = [
   // Original 12
   "Pietro Smusi Ave.", "Orazio Grinzosi Monument", "Claudio Torres St.", "Bibbiena Square",
   "Porta Belandi", "Borgo Catafratto", "Zephir Boulevard", "Bruno Strati Tower",
-  "Mhanz Road", "Porto Caselli", "Piermenti Gardens", "Bruttovedere",
+  "Mhanz Road", "Porto Caselli", "Piermenti Gardens", "Edera",
   // New 3 (Canova Bridge, Foscari Gate, & Valdoria Crossing removed)
   "Stellario Park", "Montecchi Heights", "Rialto East"
 ];
@@ -15,7 +15,7 @@ const stations = [
 //  1 Pietro Smusi Ave.        2 Orazio Grinzosi Monument  3 Claudio Torres St.
 //  4 Bibbiena Square          5 Porta Belandi             6 Borgo Catafratto
 //  7 Zephir Boulevard         8 Bruno Strati Tower        9 Mhanz Road
-// 10 Porto Caselli            11 Piermenti Gardens        12 Bruttovedere
+// 10 Porto Caselli            11 Piermenti Gardens        12 Edera
 // 13 Stellario Park           14 Montecchi Heights        15 Rialto East
 //
 // Interchange stations:
@@ -30,8 +30,8 @@ const lines = [
   { name: "Red Line", stations: ["Pietro Smusi Ave.", "Orazio Grinzosi Monument", "Claudio Torres St.", "Bibbiena Square", "Porta Belandi", "Borgo Catafratto"] },
   // Blue:   Zephir ─ Bruno ─ Claudio ─ Mhanz ─ Porto ─ Piermenti
   { name: "Blue Line", stations: ["Zephir Boulevard", "Bruno Strati Tower", "Claudio Torres St.", "Mhanz Road", "Porto Caselli", "Piermenti Gardens"] },
-  // Green:  Bruttovedere ─ Bibbiena ─ Porto ─ Stellario
-  { name: "Green Line", stations: ["Bruttovedere", "Bibbiena Square", "Porto Caselli", "Stellario Park"] },
+  // Green:  Edera ─ Bibbiena ─ Porto ─ Stellario
+  { name: "Green Line", stations: ["Edera", "Bibbiena Square", "Porto Caselli", "Stellario Park"] },
   // Yellow: Montecchi ─ Porta ─ Rialto East ─ Stellario
   { name: "Yellow Line", stations: ["Montecchi Heights", "Porta Belandi", "Rialto East", "Stellario Park"] }
 ];
@@ -153,7 +153,7 @@ db.serialize(() => {
       // Insert some games for user1 and user2
       if (u.username === "giuseppe") {
         db.get("SELECT id FROM stations WHERE name = 'Pietro Smusi Ave.'", (err, sRow) => {
-          db.get("SELECT id FROM stations WHERE name = 'Bruttovedere'", (err, dRow) => {
+          db.get("SELECT id FROM stations WHERE name = 'Edera'", (err, dRow) => {
             if (sRow && dRow) {
               db.run("INSERT INTO games (user_id, start_station_id, destination_station_id, score) VALUES (?, ?, ?, ?)", [userId, sRow.id, dRow.id, 8]);
             }
