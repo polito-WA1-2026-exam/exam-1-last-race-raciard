@@ -3,7 +3,7 @@
 
 ## React Client Application Routes
 
-- Route `/`: Main gameplay view. Contains the interactive subway map visualization, handles route planning logic, and displays the step-by-step animation of the executed journey.
+- Route `/`: Main gameplay view. If the user is logged in, it displays the interactive subway map, handles route planning, and plays the step-by-step journey animation. If the user is not logged in, it shows the game instructions and a link to the login page.
 - Route `/login`: Login view. Handles user authentication.
 - Route `/ranking`: Leaderboard view. Fetches and displays the global ranking of users based on their best scores achieved across all played games.
 - Route `*`: Route that automatically redirects any unknown URL paths back to the root `/` page.
@@ -12,6 +12,7 @@
 
 ### `POST /api/sessions`
 * **Description**: Authenticates user credentials and starts a new session.
+* **Returns**: A JSON object representing the logged-in user with their `id` and `username`.
 * **Request Body**:
   ```json
   {
@@ -35,11 +36,13 @@
 
 ### `DELETE /api/sessions/current`
 * **Description**: Logs out the currently authenticated user and destroys the session.
+* **Returns**: Nothing (empty response body).
 * **Request**: None.
 * **Response (`204 No Content`)**: Empty response body.
 
 ### `GET /api/sessions/current`
 * **Description**: Checks the authentication status and returns the currently logged-in user details.
+* **Returns**: A JSON object representing the current user session with their `id` and `username`.
 * **Request**: None.
 * **Response (`200 OK`)**:
   ```json
@@ -51,6 +54,9 @@
 
 ### `GET /api/network`
 * **Description**: Retrieves the complete transit network structure, including all stations and lines.
+* **Returns**: A JSON object containing two main lists:
+  - `stations`: An array of station objects, each containing its `id` and `name`.
+  - `lines`: An array of line objects, each containing its `id`, `name`, and the ordered list of station IDs (`stations`) on that line.
 * **Request**: None.
 * **Response (`200 OK`)**:
   ```json
@@ -70,6 +76,7 @@
 
 ### `GET /api/events`
 * **Description**: Retrieves all possible random transit events.
+* **Returns**: A JSON array of event objects, each containing its `id`, a text `description`, and the score modifier `effect`.
 * **Request**: None.
 * **Response (`200 OK`)**:
   ```json
@@ -84,6 +91,7 @@
 
 ### `GET /api/ranking`
 * **Description**: Retrieves the global leaderboard rankings (best score achieved by each user). Requires authentication.
+* **Returns**: A JSON array of leaderboard entries, sorted by best score descending. Each entry contains the `username` and their `best_score`.
 * **Request**: None.
 * **Response (`200 OK`)**:
   ```json
@@ -97,6 +105,9 @@
 
 ### `POST /api/games`
 * **Description**: Starts a new game by selecting random start/destination stations and storing start state in session. Requires authentication.
+* **Returns**: A JSON object containing the game configuration:
+  - `start`: The starting station object with its `id` and `name`.
+  - `destination`: The target destination station object with its `id` and `name`.
 * **Request**: None.
 * **Response (`200 OK`)**:
   ```json
@@ -108,6 +119,11 @@
 
 ### `POST /api/games/result`
 * **Description**: Validates and executes the submitted route, saving the score result to the database and clearing the active session game. Requires authentication.
+* **Returns**: A JSON object containing the simulation results:
+  - `isInvalid`: Boolean indicating whether the route was physically invalid (disconnected or non-existent stations).
+  - `score`: The final accumulated score.
+  - `steps`: An array of leg-by-leg steps executed, where each leg contains `from` (origin station ID), `to` (destination station ID), `event` (event object if triggered), `coins` (current currency/score progress), `lineId` (the subway line ID used), and `isFailed` (whether this step failed).
+  - `failReason`: A text description of the failure if the route failed, or `null`.
 * **Request Body**:
   ```json
   {
@@ -218,8 +234,8 @@ Stores completed game scores and history.
 - **`useGame`** (in `client/src/hooks/useGame.js`): Manages the gameplay logic and phase transitions (setup, planning, executing, results), and sends API requests to the server.
 - **`useNetwork`** (in `client/src/hooks/useNetwork.js`): Fetches the subway map data (stations and lines) from the API and lists all connection segments.
 - **`useTimer`** (in `client/src/hooks/useTimer.js`): A simple countdown timer that submits the user's route automatically when the time runs out.
-- **`useWalkAnimation`** (in `client/src/hooks/useWalkAnimation.js`): Handles moving the character smoothly from station to station on the map when showing the journey.
-- **`useMapLayout`** (in `client/src/hooks/useMapLayout.js`): Calculates where to place stations on the screen to draw the SVG subway map correctly.
+- **`useWalkAnimation`** (in `client/src/hooks/useWalkAnimation.js`): Drives the character's movement animation during the execution phase. It updates `walkProgress` (how far the sprite is between stations) to animate the sliding and bouncing effects, updates the current station step index (`execStep`), and triggers the `finishGame` callback when the run is complete.
+- **`useMapLayout`** (in `client/src/hooks/useMapLayout.js`): Uses mathematical algorithms to generate a visual arrangement of the stations so they look like a real subway network. It returns the coordinates `{ x, y }` for each station, the SVG `viewBox` boundaries to fit everything on the screen.
 
 ## Screenshot
 
@@ -233,8 +249,11 @@ Stores completed game scores and history.
 
 ## Assets Disclaimer
 
-The assets used for the Character are distributed under Creative Commons.
+The assets used for the Character are distributed under Creative Commons and available here: [https://kenney.nl/assets/platformer-characters](https://kenney.nl/assets/platformer-characters).
 
 ## Use of AI Tools
+LLMs (Gemini / Gemini CLI) helped me to find errors in the code, to generate boilerplate code, to write better documentation and comments (for example full JSdocs documentation of the main functions) and also to improve the UI styling.
+
+Every output generated by AI has been revised and corrected by me before being accepted. Every decision, about the architecture and the features of the program (i.e. which React features to use, how to structure the Database), has been taken by me.
 
 
