@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+
 import { TransformWrapper, TransformComponent, useControls } from 'react-zoom-pan-pinch';
 import { PHASES } from '../../../../hooks/useGame';
 import RoutePath from './RoutePath';
@@ -49,23 +49,35 @@ function NetworkMap({
   lines = []
 }) {
 
+  // --- REACT HOOKS ---
+
+  // Connect to the main game context to access state updates and finish callbacks
   const { phase, gameResult, currentGame, gameActions } = useGameContext();
   const { finishGame } = gameActions;
-  const showLines = phase === PHASES.SETUP;
+
+  // Animate the character walking along the path and increment the animation step
   const walkProgress = useWalkAnimation(phase, gameResult, finishGame, setExecStep);
 
+  // Translate raw stations and lines into 2D layout coordinates and SVG box limits
   const {
     stationCoords,
     viewBox,
     stationLineCounts
   } = useMapLayout(stations, lines);
 
+  // Derive path segment, character state, and active station directly during render.
+  // These are fast, O(1) property checks, so they don't need the overhead of useMemo.
   const steps = gameResult?.steps || [];
   const currentStep = steps[execStep];
 
-  const currentSegment = useMemo(() => getCurrentSegment(phase, currentStep), [phase, currentStep]);
-  const characterState = useMemo(() => getCharacterState(phase, gameResult, execStep), [phase, gameResult, execStep]);
-  const currentStationId = useMemo(() => getCurrentStationId(phase, currentGame, execStep, gameResult), [phase, currentGame, execStep, gameResult]);
+  const currentSegment = getCurrentSegment(phase, currentStep);
+  const characterState = getCharacterState(phase, gameResult, execStep);
+  const currentStationId = getCurrentStationId(phase, currentGame, execStep, gameResult);
+
+  // --- LOCAL VARIABLES ---
+
+  // Display the full network subway lines only during the initial setup phase
+  const showLines = phase === PHASES.SETUP;
 
   // Player position coordinate animation logic
   let playerPosition = currentStationId ? stationCoords[currentStationId] || null : null;

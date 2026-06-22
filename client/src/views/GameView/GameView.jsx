@@ -11,6 +11,7 @@ import { CHARACTERS } from './components/NetworkMap/CharacterSprite';
 import './GameView.css';
 
 function GameLayout() {
+  // Grab the current game state and helper actions from our context provider
   const {
     phase,
     currentGame,
@@ -19,14 +20,47 @@ function GameLayout() {
     gameActions,
   } = useGameContext();
 
+  // Load the stations network topology, connecting paths, and loading flags
   const { stations, lines, segments, loading: networkLoading } = useNetwork();
   const { setSelectedRoute } = gameActions;
 
+  // Let the user pick which driver character sprite they want to run on the map
   const [selectedCharacter, setSelectedCharacter] = useState(Object.keys(CHARACTERS)[0]);
+
+  // Track our current animation step during the simulated run
   const [execStep, setExecStep] = useState(0);
+
+  // Controls whether the main route map gets expanded to full-width mode
   const [isExpanded, setIsExpanded] = useState(false);
+
+  // Handles errors like submitting empty routes
   const [validationError, setValidationError] = useState('');
+
+  // Keep track of the active game ID to reset progress when switching levels
   const [prevGameId, setPrevGameId] = useState(null);
+
+  // Automatically hide the validation error banner after 3 seconds
+  useEffect(() => {
+    if (!validationError) return;
+    const timer = setTimeout(() => {
+      setValidationError('');
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [validationError]);
+
+  // Handles sending the finalized rail path to the server simulation
+  const submitRoute = useCallback((segments, force = false) => {
+    if (phase === PHASES.PLANNING) {
+      if (segments.length === 0 && force !== true) {
+        setValidationError("Please add a path to submit");
+        return;
+      }
+      setValidationError('');
+      gameActions.submitRoute(segments);
+    }
+  }, [phase, gameActions]);
+
+  // --- DERIVED STATE & INTERMEDIARY CALCULATIONS ---
 
   const currentGameId = currentGame ? `${currentGame.start.id}-${currentGame.destination.id}` : null;
   const steps = gameResult?.steps || [];
@@ -45,30 +79,12 @@ function GameLayout() {
     (phase === PHASES.EXECUTION && isFinished && !hasFailedStep)
   );
 
+  // React pattern to reset local state whenever the active game target changes
   if (currentGameId !== prevGameId) {
     setPrevGameId(currentGameId);
     setExecStep(0);
     setValidationError('');
   }
-
-  useEffect(() => {
-    if (!validationError) return;
-    const timer = setTimeout(() => {
-      setValidationError('');
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, [validationError]);
-
-  const submitRoute = useCallback((segments, force = false) => {
-    if (phase === PHASES.PLANNING) {
-      if (segments.length === 0 && force !== true) {
-        setValidationError("Please add a path to submit");
-        return;
-      }
-      setValidationError('');
-      gameActions.submitRoute(segments);
-    }
-  }, [phase, gameActions]);
 
   const handleSegmentClick = (seg) => {
     if (phase !== PHASES.PLANNING) return;
@@ -218,8 +234,12 @@ function GameLayout() {
 }
 
 function GameView() {
+  // Check if there is an active user session
   const { user } = useAuth();
+
+  // If no user is logged in, show the introductory instructions instead of the game
   if (!user) return <Instructions />;
+
   return (
     <GameProvider>
       <GameLayout />
