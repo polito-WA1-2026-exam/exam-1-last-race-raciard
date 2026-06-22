@@ -56,7 +56,7 @@ const CHARACTERS = {
  * @param {number} [props.size=50] - The sprite size.
  * @param {string} [props.character='Player'] - The character type identifier.
  */
-function CharacterSprite({ x, y, x2, y2, progress = 0, state = 'idle', size = 50, character = 'Player' }) {
+function CharacterSprite({ x, y, x2, y2, progress = 0, state = 'idle', size = 50, character = Object.keys(CHARACTERS)[0] }) {
   // Interpolated position
   const currentX = x2 !== undefined ? x + (x2 - x) * progress : x;
   const currentY = y2 !== undefined ? y + (y2 - y) * progress : y;

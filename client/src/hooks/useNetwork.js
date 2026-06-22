@@ -22,7 +22,6 @@ export function useNetwork() {
 
   const fetchNetwork = async () => {
     try {
-      setLoading(true);
       const { stations: s, lines: l } = await getNetwork();
       setStations(s);
       setLines(l);
@@ -32,9 +31,9 @@ export function useNetwork() {
         const sorted = [...line.stations].sort((a, b) => a.position - b.position);
         for (let i = 0; i < sorted.length - 1; i++) {
           segs.push({
-            s1_id: sorted[i].id,   s1_name: sorted[i].name,
-            s2_id: sorted[i+1].id, s2_name: sorted[i+1].name,
-            line_id: line.id,      line_name: line.name
+            s1_id: sorted[i].id, s1_name: sorted[i].name,
+            s2_id: sorted[i + 1].id, s2_name: sorted[i + 1].name,
+            line_id: line.id, line_name: line.name
           });
         }
       }

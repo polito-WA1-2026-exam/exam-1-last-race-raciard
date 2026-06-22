@@ -34,7 +34,7 @@ app.use(cors({
 
 // Setup Session
 app.use(session({
-  secret: 'a secret sentence not to share with anybody and seals all the cookies',
+  secret: 'frase segretissima per sigillare i cookies, andrà bene questo esame??',
   resave: false,
   saveUninitialized: false
 }));

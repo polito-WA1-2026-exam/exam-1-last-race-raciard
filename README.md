@@ -233,7 +233,6 @@ Stores completed game scores and history.
 
 - **`useGame`** (in `client/src/hooks/useGame.js`): Manages the gameplay logic and phase transitions (setup, planning, executing, results), and sends API requests to the server.
 - **`useNetwork`** (in `client/src/hooks/useNetwork.js`): Fetches the subway map data (stations and lines) from the API and lists all connection segments.
-- **`useTimer`** (in `client/src/hooks/useTimer.js`): A simple countdown timer that submits the user's route automatically when the time runs out.
 - **`useWalkAnimation`** (in `client/src/hooks/useWalkAnimation.js`): Drives the character's movement animation during the execution phase. It updates `walkProgress` (how far the sprite is between stations) to animate the sliding and bouncing effects, updates the current station step index (`execStep`), and triggers the `finishGame` callback when the run is complete.
 - **`useMapLayout`** (in `client/src/hooks/useMapLayout.js`): Uses mathematical algorithms to generate a visual arrangement of the stations so they look like a real subway network. It returns the coordinates `{ x, y }` for each station, the SVG `viewBox` boundaries to fit everything on the screen.
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { GameProvider, useGameContext, PHASES } from '../../contexts/GameContext';
 import { useNetwork } from '../../hooks/useNetwork';
@@ -15,13 +15,14 @@ function GameLayout() {
     phase,
     currentGame,
     gameResult,
+    selectedRoute,
     gameActions,
   } = useGameContext();
 
   const { stations, lines, segments, loading: networkLoading } = useNetwork();
+  const { setSelectedRoute } = gameActions;
 
-  const [selectedRoute, setSelectedRoute] = useState([]);
-  const [selectedCharacter, setSelectedCharacter] = useState('Player');
+  const [selectedCharacter, setSelectedCharacter] = useState(Object.keys(CHARACTERS)[0]);
   const [execStep, setExecStep] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
   const [validationError, setValidationError] = useState('');
@@ -46,7 +47,6 @@ function GameLayout() {
 
   if (currentGameId !== prevGameId) {
     setPrevGameId(currentGameId);
-    setSelectedRoute([]);
     setExecStep(0);
     setValidationError('');
   }
@@ -59,7 +59,7 @@ function GameLayout() {
     return () => clearTimeout(timer);
   }, [validationError]);
 
-  const submitRoute = (segments, force = false) => {
+  const submitRoute = useCallback((segments, force = false) => {
     if (phase === PHASES.PLANNING) {
       if (segments.length === 0 && force !== true) {
         setValidationError("Please add a path to submit");
@@ -68,7 +68,7 @@ function GameLayout() {
       setValidationError('');
       gameActions.submitRoute(segments);
     }
-  };
+  }, [phase, gameActions]);
 
   const handleSegmentClick = (seg) => {
     if (phase !== PHASES.PLANNING) return;

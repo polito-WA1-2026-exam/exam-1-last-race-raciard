@@ -1,6 +1,24 @@
+import { useState, useEffect } from "react";
 import { PHASES, useGameContext } from "../../../../contexts/GameContext";
-import { useTimer } from "../../../../hooks/useTimer";
 import "./GameControls.css";
+
+function Countdown() {
+    const [timeLeft, setTimeLeft] = useState(90);
+
+    useEffect(() => {
+        const id = setTimeout(() => {
+            setTimeLeft(prev => Math.max(prev - 1, 0));
+        }, 1000);
+
+        return () => clearTimeout(id);
+    }, [timeLeft]);
+
+    return (
+        <div className={`timer-compact ${timeLeft < 20 ? 'timer-urgent' : 'timer-normal'}`}>
+            {String(timeLeft).padStart(2, '0')}s
+        </div>
+    );
+}
 
 /**
  * Renders the top control bar for the game.
@@ -15,15 +33,9 @@ import "./GameControls.css";
 function GameControls({ isExpanded, setIsExpanded, onSubmit }) {
     const { phase, currentGame, gameActions } = useGameContext();
     const { startGame, resetToSetup } = gameActions;
-    const { timeLeft, start: startTimer } = useTimer(phase === PHASES.PLANNING, () => {
-        onSubmit(true);
-    });
 
     const handleStartGame = async () => {
-        const game = await startGame();
-        if (game) {
-            startTimer(90);
-        }
+        await startGame();
     };
 
     const getTitle = () => {
@@ -63,9 +75,7 @@ function GameControls({ isExpanded, setIsExpanded, onSubmit }) {
 
                 {phase === PHASES.PLANNING && (
                     <>
-                        <div className={`timer-compact ${timeLeft < 20 ? 'timer-urgent' : 'timer-normal'}`}>
-                            {String(timeLeft).padStart(2, '0')}s
-                        </div>
+                        <Countdown />
                         <button onClick={onSubmit} className="expand-button action-btn-green">FINISH PLAN</button>
                     </>
                 )}

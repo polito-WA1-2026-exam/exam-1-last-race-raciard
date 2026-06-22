@@ -47,11 +47,11 @@ function RankingView() {
         <h1 className="view-title ranking-title">Global Ranking</h1>
         <p className="ranking-subtitle">Top performers in the underground network.</p>
       </div>
-      
+
       <RankingTable ranking={ranking} />
-      
+
       <div className="ranking-footer">
-        <button 
+        <button
           onClick={fetchRanking}
           className="refresh-button"
         >

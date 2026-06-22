@@ -29,11 +29,11 @@ const stations = [
 
 const lines = [
   // Red:    Pietro ─ Orazio ─ Claudio ─ Bibbiena ─ Porta ─ Borgo
-  { name: "Red Line",    stations: ["Pietro Smusi Ave.", "Orazio Grinzosi Monument", "Claudio Torres St.", "Bibbiena Square", "Porta Belandi", "Borgo Catafratto"] },
+  { name: "Red Line", stations: ["Pietro Smusi Ave.", "Orazio Grinzosi Monument", "Claudio Torres St.", "Bibbiena Square", "Porta Belandi", "Borgo Catafratto"] },
   // Blue:   Zephir ─ Bruno ─ Claudio ─ Mhanz ─ Porto ─ Piermenti
-  { name: "Blue Line",   stations: ["Zephir Boulevard", "Bruno Strati Tower", "Claudio Torres St.", "Mhanz Road", "Porto Caselli", "Piermenti Gardens"] },
+  { name: "Blue Line", stations: ["Zephir Boulevard", "Bruno Strati Tower", "Claudio Torres St.", "Mhanz Road", "Porto Caselli", "Piermenti Gardens"] },
   // Green:  Bruttovedere ─ Bibbiena ─ Valdoria ─ Porto ─ Stellario ─ Foscari
-  { name: "Green Line",  stations: ["Bruttovedere", "Bibbiena Square", "Valdoria Crossing", "Porto Caselli", "Stellario Park", "Foscari Gate"] },
+  { name: "Green Line", stations: ["Bruttovedere", "Bibbiena Square", "Valdoria Crossing", "Porto Caselli", "Stellario Park", "Foscari Gate"] },
   // Yellow: Montecchi ─ Porta ─ Rialto East ─ Foscari ─ Canova
   { name: "Yellow Line", stations: ["Montecchi Heights", "Porta Belandi", "Rialto East", "Foscari Gate", "Canova Bridge"] }
 ];
@@ -140,7 +140,6 @@ db.serialize(() => {
           if (row) insertConn.run(lineId, row.id, sPos);
         });
       });
-      // insertConn.finalize(); // Can't finalize here easily due to async db.get
     });
   });
 
