@@ -4,7 +4,7 @@ import { GameProvider, useGameContext, PHASES } from '../../contexts/GameContext
 import { useNetwork } from '../../hooks/useNetwork';
 import Instructions from './components/Instructions/Instructions';
 import NetworkMap from './components/NetworkMap/NetworkMap';
-import GameControls from './components/NetworkMap/GameControls';
+import GameControls from './components/GameControls/GameControls';
 import RouteBuilder from './components/RouteBuilder/RouteBuilder';
 import JourneyLog from './components/JourneyLog/JourneyLog';
 import { CHARACTERS } from './components/NetworkMap/CharacterSprite';
@@ -124,9 +124,9 @@ function GameLayout() {
                 </div>
               )}
               {validationError && (
-                <div 
-                  className="fail-overlay" 
-                  onClick={() => setValidationError('')} 
+                <div
+                  className="fail-overlay"
+                  onClick={() => setValidationError('')}
                   style={{ cursor: 'pointer', pointerEvents: 'auto' }}
                 >
                   <span className="fail-overlay-label">SUBMIT ERROR</span>
@@ -216,7 +216,6 @@ function GameLayout() {
               phase={phase}
               execStep={execStep}
               stations={stations}
-              lines={lines}
             />
           )}
         </aside>

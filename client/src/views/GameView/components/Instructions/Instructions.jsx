@@ -50,6 +50,9 @@ function Instructions() {
           </Link>
         </div>
       </div>
+      <div className="instructions-footer-banner">
+        Made with ❤️, React and Express by s338616
+      </div>
     </div>
   );
 }

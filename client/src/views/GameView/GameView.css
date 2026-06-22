@@ -349,3 +349,15 @@
   opacity: 0.6;
   margin: 0.1rem 0;
 }
+
+.sidebar-footer-banner {
+  padding: 0.75rem 1rem;
+  text-align: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--slate-500);
+  border-top: 2px solid var(--slate-800);
+  background-color: rgba(15, 23, 42, 0.3);
+}

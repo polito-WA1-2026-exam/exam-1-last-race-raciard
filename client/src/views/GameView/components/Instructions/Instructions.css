@@ -137,3 +137,15 @@
 .login-button:hover {
   transform: translateY(-1px);
 }
+
+.instructions-footer-banner {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--slate-500);
+  border-top: 1px solid var(--slate-800);
+  padding-top: 1.5rem;
+}

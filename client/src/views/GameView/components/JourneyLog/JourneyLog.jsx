@@ -1,8 +1,7 @@
-import LineBadge from '../LineBadge/LineBadge';
 import { PHASES } from '../../../../hooks/useGame';
 import './JourneyLog.css';
 
-function JourneyLog({ gameResult, phase, execStep, stations = [], lines = [] }) {
+function JourneyLog({ gameResult, phase, execStep, stations = [] }) {
 
   return (
     <div className="journey-log-container">
@@ -31,9 +30,6 @@ function JourneyLog({ gameResult, phase, execStep, stations = [], lines = [] }) 
             {gameResult.steps.slice(0, execStep).map((step, i) => (
               <div key={i} className="step-card">
                 <div className="step-header">
-                  {step.lineId && lines.length > 0 && (
-                    <LineBadge line={lines.find(l => l.id === step.lineId) ?? { id: step.lineId, name: '?' }} lines={lines} />
-                  )}
                   <p className="step-route">
                     {stations.find(s => s.id === step.from)?.name} → {stations.find(s => s.id === step.to)?.name}
                   </p>

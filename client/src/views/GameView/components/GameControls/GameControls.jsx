@@ -1,8 +1,9 @@
 import { PHASES, useGameContext } from "../../../../contexts/GameContext";
 import { useTimer } from "../../../../hooks/useTimer";
+import "./GameControls.css";
 
 /**
- * Renders the top control bar inside the NetworkMap.
+ * Renders the top control bar for the game.
  * Handles the game start button, the countdown timer during planning,
  * the route submission button, and the map maximize/minimize toggle.
  * 
@@ -81,4 +82,4 @@ function GameControls({ isExpanded, setIsExpanded, onSubmit }) {
     )
 }
 
-export default GameControls
+export default GameControls;
