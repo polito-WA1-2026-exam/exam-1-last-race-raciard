@@ -222,7 +222,7 @@
 
 .success-overlay {
   position: absolute;
-  bottom: 3.5rem;
+  bottom: 4rem;
   /* sit above zoom controls */
   left: 50%;
   transform: translateX(-50%);
@@ -230,18 +230,19 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.3rem;
-  background-color: rgba(22, 101, 52, 0.92);
-  border: 1px solid #22c55e;
-  border-radius: 3px;
-  padding: 0.6rem 1.2rem;
+  gap: 0.4rem;
+  background-color: rgba(22, 101, 52, 0.95);
+  border: 2px solid #22c55e;
+  border-radius: 6px;
+  padding: 1rem 2rem;
   text-align: center;
   pointer-events: none;
   animation: fail-overlay-in 0.4s ease-out;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 
 .success-overlay-label {
-  font-size: 0.6rem;
+  font-size: 0.85rem;
   font-weight: 900;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -249,8 +250,8 @@
 }
 
 .success-overlay-score {
-  font-size: 0.8rem;
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 900;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: #ffffff;

@@ -34,12 +34,12 @@ import zeb_walk1 from '../../../../assets/kenney_platformer-characters/PNG/Zeb/P
 import zeb_walk2 from '../../../../assets/kenney_platformer-characters/PNG/Zeb/Poses/zeb_walk2.png';
 
 const CHARACTERS = {
-  Player: { idle: player_idle, walk1: player_walk1, walk2: player_walk2, win: player_cheer, lose: player_hurt },
-  Adventurer: { idle: adventurer_idle, walk1: adventurer_walk1, walk2: adventurer_walk2, win: adventurer_cheer, lose: adventurer_hurt },
-  Female: { idle: female_idle, walk1: female_walk1, walk2: female_walk2, win: female_cheer, lose: female_hurt },
-  Soldier: { idle: soldier_idle, walk1: soldier_walk1, walk2: soldier_walk2, win: soldier_cheer, lose: soldier_hurt },
+  Franco: { idle: player_idle, walk1: player_walk1, walk2: player_walk2, win: player_cheer, lose: player_hurt },
+  Giuseppe: { idle: adventurer_idle, walk1: adventurer_walk1, walk2: adventurer_walk2, win: adventurer_cheer, lose: adventurer_hurt },
+  Antonella: { idle: female_idle, walk1: female_walk1, walk2: female_walk2, win: female_cheer, lose: female_hurt },
+  Salvatore: { idle: soldier_idle, walk1: soldier_walk1, walk2: soldier_walk2, win: soldier_cheer, lose: soldier_hurt },
   Zombie: { idle: zombie_idle, walk1: zombie_walk1, walk2: zombie_walk2, win: zombie_cheer, lose: zombie_hurt },
-  Zeb: { idle: zeb_idle, walk1: zeb_walk1, walk2: zeb_walk2, win: zeb_idle, lose: zeb_idle },
+  Kenneth: { idle: zeb_idle, walk1: zeb_walk1, walk2: zeb_walk2, win: zeb_idle, lose: zeb_idle },
 };
 
 /**
@@ -64,17 +64,17 @@ function CharacterSprite({ x, y, x2, y2, progress = 0, state = 'idle', size = 50
   let isFlipped = false;
   let bounce = 0;
   let animationFrame = 0;
-  
+
   if (x2 !== undefined && y2 !== undefined) {
     const dx = x2 - x;
     const dy = y2 - y;
     isFlipped = dx < 0;
-    
+
     if (state === 'walk') {
       const totalDistance = Math.sqrt(dx * dx + dy * dy);
       const traversed = totalDistance * progress;
-      const pixelsPerStep = 30; 
-      
+      const pixelsPerStep = 30;
+
       bounce = Math.abs(Math.sin(traversed / pixelsPerStep * Math.PI)) * -10;
       animationFrame = Math.floor(traversed / (pixelsPerStep / 1.5)) % 2;
     }
@@ -85,8 +85,8 @@ function CharacterSprite({ x, y, x2, y2, progress = 0, state = 'idle', size = 50
 
   const getSprite = () => {
     const sprites = CHARACTERS[character] || CHARACTERS.Player;
-    switch(state) {
-      case 'walk': 
+    switch (state) {
+      case 'walk':
         return animationFrame === 0 ? sprites.walk1 : sprites.walk2;
       case 'win': return sprites.win;
       case 'lose': return sprites.lose;
@@ -96,8 +96,8 @@ function CharacterSprite({ x, y, x2, y2, progress = 0, state = 'idle', size = 50
 
   return (
     <g transform={`translate(${currentX}, ${currentY + bounce})`}>
-      <g 
-        className={isLost ? 'animate-fall' : isWinner ? 'animate-jump' : ''} 
+      <g
+        className={isLost ? 'animate-fall' : isWinner ? 'animate-jump' : ''}
         transform={`${isFlipped ? 'scale(-1, 1)' : ''} rotate(${isLost ? 90 : 0})`}
       >
 
