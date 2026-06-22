@@ -16,15 +16,15 @@
 * **Request Body**:
   ```json
   {
-    "username": "user1",
-    "password": "password"
+    "username": "giuseppe",
+    "password": "webapp"
   }
   ```
 * **Response (`200 OK`)**:
   ```json
   {
     "id": 1,
-    "username": "user1"
+    "username": "giuseppe"
   }
   ```
 * **Response (`401 Unauthorized`)**:
@@ -48,7 +48,7 @@
   ```json
   {
     "id": 1,
-    "username": "user1"
+    "username": "giuseppe"
   }
   ```
 
@@ -97,7 +97,7 @@
   ```json
   [
     {
-      "username": "user1",
+      "username": "giuseppe",
       "best_score": 33
     }
   ]
@@ -242,9 +242,10 @@ Stores completed game scores and history.
 
 ## Users Credentials
 
-- `user1`, `password`
-- `user2`, `password`
-- `user3`, `password`
+- `giuseppe`, `webapp`
+- `antimo`, `prova`
+- `pasquale`, `ciao`
+- `michele`, `buonasera`
 
 ## Assets Disclaimer
 
