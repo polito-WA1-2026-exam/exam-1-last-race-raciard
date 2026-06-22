@@ -10,7 +10,7 @@ function Navbar() {
       {/* Left: system identity */}
       <div className="navbar-identity">
         <Link to="/" className="navbar-logo">
-          <span className="logo-title">LAST<span className="logo-accent">RACE</span></span>
+          <span className="logo-title">Last<span className="logo-accent">Race</span></span>
         </Link>
         <span className="navbar-separator">|</span>
         <div className="navbar-tabs">

@@ -9,7 +9,7 @@ function Instructions() {
       <div className="instructions-content">
         <section>
           <h2 className="instructions-section-title">The Objective</h2>
-          <p className="instructions-text">Navigate from a <span className="text-start">Start</span> station to a <span className="text-destination">Destination</span>. Score points by reaching the goal with credits remaining.</p>
+          <p className="instructions-text">Subway networks are often confusing! This game will test if you are able to reconstruct a path from a <span className="text-start">Start</span> station to a <span className="text-destination">Destination</span>, navigating the layout and planning your route strategically.</p>
         </section>
 
         <section>
@@ -33,25 +33,18 @@ function Instructions() {
               <span className="phase-dot"></span>
               <div>
                 <strong className="phase-title">3. Execution</strong>
-                <span className="phase-description">Watch your character travel. Random events occur at each stop.</span>
+                <span className="phase-description">Watch your character travel. Each time you cross a station, a random event occurs that can affect your score or journey!</span>
               </div>
             </li>
           </ul>
         </section>
 
-        <section className="critical-rules">
-          <h2 className="critical-rules-title">Critical Rules</h2>
-          <p className="critical-rules-text">"Change lines only at interchange stations. Routes must be a continuous sequence. Attempting an invalid connection results in immediate system failure."</p>
-        </section>
         <div className="ready-container">
-          <span className="ready-text">Ready to run?</span>
+          <span className="ready-text">Ready to Play?</span>
           <Link to="/login" className="login-link">
             <button className="btn btn-primary login-button">Login</button>
           </Link>
         </div>
-      </div>
-      <div className="instructions-footer-banner">
-        Made with ❤️, React and Express by s338616
       </div>
     </div>
   );

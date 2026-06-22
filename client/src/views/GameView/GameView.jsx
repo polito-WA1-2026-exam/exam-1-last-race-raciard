@@ -143,11 +143,6 @@ function GameLayout() {
         <aside className="sidebar-section">
           {phase === PHASES.SETUP && (
             <div className="sidebar-content">
-              <h3 className="subway-header">Mission Protocol</h3>
-              <div className="mission-quote">
-                Identify the optimal sequence through the Subway Network. You have 90 seconds!
-              </div>
-
               <div className="agent-selection">
                 <h4 className="agent-selection-title">Select Character</h4>
                 <div className="agent-grid">
