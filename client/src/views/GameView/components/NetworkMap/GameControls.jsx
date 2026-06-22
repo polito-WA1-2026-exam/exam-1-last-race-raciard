@@ -15,7 +15,7 @@ function GameControls({ isExpanded, setIsExpanded, onSubmit }) {
     const { phase, currentGame, gameActions } = useGameContext();
     const { startGame, resetToSetup } = gameActions;
     const { timeLeft, start: startTimer } = useTimer(phase === PHASES.PLANNING, () => {
-        onSubmit();
+        onSubmit(true);
     });
 
     const handleStartGame = async () => {

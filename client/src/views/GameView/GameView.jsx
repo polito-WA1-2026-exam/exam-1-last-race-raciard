@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { GameProvider, useGameContext, PHASES } from '../../contexts/GameContext';
 import { useNetwork } from '../../hooks/useNetwork';
@@ -25,17 +25,9 @@ function GameLayout() {
   const [execStep, setExecStep] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
   const [validationError, setValidationError] = useState('');
-
-  const currentGameId = currentGame ? `${currentGame.start.id}-${currentGame.destination.id}` : null;
   const [prevGameId, setPrevGameId] = useState(null);
 
-  if (currentGameId !== prevGameId) {
-    setPrevGameId(currentGameId);
-    setSelectedRoute([]);
-    setExecStep(0);
-    setValidationError('');
-  }
-
+  const currentGameId = currentGame ? `${currentGame.start.id}-${currentGame.destination.id}` : null;
   const steps = gameResult?.steps || [];
   const isFinished = execStep >= steps.length;
   const currentStep = steps[execStep];
@@ -52,11 +44,25 @@ function GameLayout() {
     (phase === PHASES.EXECUTION && isFinished && !hasFailedStep)
   );
 
-  const submitRoute = (segments) => {
+  if (currentGameId !== prevGameId) {
+    setPrevGameId(currentGameId);
+    setSelectedRoute([]);
+    setExecStep(0);
+    setValidationError('');
+  }
+
+  useEffect(() => {
+    if (!validationError) return;
+    const timer = setTimeout(() => {
+      setValidationError('');
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [validationError]);
+
+  const submitRoute = (segments, force = false) => {
     if (phase === PHASES.PLANNING) {
-      if (segments.length === 0) {
+      if (segments.length === 0 && force !== true) {
         setValidationError("Please add a path to submit");
-        setTimeout(() => setValidationError(''), 3000);
         return;
       }
       setValidationError('');
@@ -95,7 +101,7 @@ function GameLayout() {
               <GameControls
                 isExpanded={isExpanded}
                 setIsExpanded={setIsExpanded}
-                onSubmit={() => submitRoute(selectedRoute)}
+                onSubmit={(force) => submitRoute(selectedRoute, force)}
               />
               <NetworkMap
                 selectedRoute={selectedRoute}

@@ -30,7 +30,7 @@ export function useMapLayout(stations, lines, baseWidth = 1000, baseHeight = 100
     const vbWidth = (maxX - minX) + margin * 2;
     const vbHeight = (maxY - minY) + margin * 2;
 
-    // Calculate interchanges
+    // Calculate interchanges (in order to make their dots bigger in the PLANNING view)
     const stationLineCounts = {};
     lines.forEach(line => {
       line.stations.forEach(s => {

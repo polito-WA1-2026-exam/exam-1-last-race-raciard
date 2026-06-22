@@ -14,7 +14,7 @@ function RankingTable({ ranking }) {
         </thead>
         <tbody>
           {ranking.map((row, index) => (
-            <RankingRow 
+            <RankingRow
               key={row.username}
               rank={index + 1}
               username={row.username}
@@ -25,7 +25,7 @@ function RankingTable({ ranking }) {
           {ranking.length === 0 && (
             <tr>
               <td colSpan="3" className="empty-ranking">
-                No missions completed yet.
+                No games completed yet.
               </td>
             </tr>
           )}

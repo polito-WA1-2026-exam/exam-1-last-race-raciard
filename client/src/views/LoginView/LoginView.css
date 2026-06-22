@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: center;
   flex: 1;
-  min-height: calc(100vh - 70px);
+  height: 100%;
   padding: 2rem 1rem;
 }
 
@@ -20,6 +20,7 @@
   flex-direction: column;
   gap: 2rem;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  margin: auto;
 }
 
 .login-card:hover {
@@ -69,4 +70,5 @@
 
 .login-submit-btn {
   margin-top: 0.5rem;
+  padding: 0.5rem;
 }

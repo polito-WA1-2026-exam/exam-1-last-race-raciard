@@ -77,7 +77,7 @@
 
 .segment-grid-list {
   display: grid;
-  grid-template-cols: 1fr;
+  grid-template-columns: 1fr;
   gap: 0.35rem;
 }
 

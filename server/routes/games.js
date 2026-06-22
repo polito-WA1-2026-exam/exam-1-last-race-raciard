@@ -96,6 +96,11 @@ export default function (gameService, gameDao, userDao) {
     router.post('/games/result', isLoggedIn, async (req, res) => {
         try {
             const { route } = req.body;
+
+            if (!Array.isArray(route) || !route.every(seg => Array.isArray(seg) && seg.length === 2 && Number.isInteger(seg[0]) && Number.isInteger(seg[1]))) {
+                return res.status(400).json({ error: 'Invalid route format. Expected an array of station pairs: [[s1, s2], ...]' });
+            }
+
             const currentGame = req.session.currentGame;
 
             if (!currentGame) {

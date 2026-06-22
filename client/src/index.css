@@ -43,18 +43,16 @@ body {
 }
 
 /* Desktop: lock the page to the viewport — all scrolling happens inside components */
-@media (min-width: 1024px) {
-  html,
-  body {
-    height: 100%;
-    overflow: hidden;
-  }
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
 
-  #root {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
+#root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Custom styling for the 'Subway' look */
@@ -205,4 +203,54 @@ body {
 
 .form-input::placeholder {
   color: var(--slate-600);
+}
+
+/* App Container and Main Layout */
+.app-container {
+  height: 100%;
+  background-color: var(--slate-950);
+  color: var(--slate-200);
+  transition: background-color 0.3s, color 0.3s;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.main-content {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+@keyframes loading {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #999;
 }

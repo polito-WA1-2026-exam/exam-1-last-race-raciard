@@ -4,7 +4,6 @@ import GameView from './views/GameView/GameView';
 import RankingView from './views/RankingView/RankingView';
 import LoginView from './views/LoginView/LoginView';
 import Navbar from './components/Navbar';
-import './App.css';
 
 function App() {
   return (
